@@ -13,4 +13,7 @@ type Course struct {
 	// foreign key
 	StudyProgramId int `gorm:"column:study_program_id"`
 	LecturerId     int `gorm:"column:lecturer_id"`
+
+	// relationship
+	StudyProgram []StudyProgram `gorm:"many2many:study_program_course"`
 }

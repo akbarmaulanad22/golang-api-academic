@@ -9,7 +9,12 @@ type Schedule struct {
 	EndAt   time.Time `gorm:"column:end_at"`
 
 	// foreign key
-	CourseId    int `gorm:"column:course_id"`
-	LecturerId  int `gorm:"column:lecturer_id"`
-	ClassroomId int `gorm:"column:classroom_id"`
+	CourseCode   int `gorm:"column:course_code"`
+	LecturerNIDN int `gorm:"column:lecturer_nidn"`
+	ClassroomId  int `gorm:"column:classroom_id"`
+
+	// relationship
+	Course    Course    `gorm:"foreignKey:course_code;references:code"`
+	Lecturer  Lecturer  `gorm:"foreignKey:lecturer_nidn:references:nidn"`
+	Classroom Classroom `gorm:"foreignKey:classroom_id;references:id"`
 }

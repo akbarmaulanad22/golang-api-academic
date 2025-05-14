@@ -10,6 +10,6 @@ type StudyProgram struct {
 	// foreign key
 	FacultyId int `gorm:"column:faculty_id"`
 
-	// relationship has one (one to one)
-	Student Student `gorm:"foreignKey:id;references:study_program_id"`
+	// relationship
+	Faculty Faculty `gorm:"foreignKey:faculty_id;references:id"`
 }

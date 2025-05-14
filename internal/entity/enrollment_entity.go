@@ -8,6 +8,11 @@ type Enrollment struct {
 	AcademicYear     string `gorm:"column:academic_year"`
 	DateRegistration time.Time
 
-	StudentId  int `gorm:"column:student_id"`
+	// foreign key
+	StudentNpm int `gorm:"column:student_npm"`
 	ScheduleId int `gorm:"column:schedule_id"`
+
+	// relationship
+	Student  Student  `gorm:"foreignKey:student_npm;references:npm"`
+	Schedule Schedule `gorm:"foreignKey:schedule_id;references:id"`
 }
