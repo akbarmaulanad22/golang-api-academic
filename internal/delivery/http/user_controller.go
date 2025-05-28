@@ -2,9 +2,9 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"tugasakhir/internal/delivery/http/middleware"
+	"tugasakhir/internal/helper"
 	"tugasakhir/internal/model"
 	"tugasakhir/internal/usecase"
 
@@ -13,86 +13,93 @@ import (
 
 type UserController struct {
 	Log     *logrus.Logger
-	Usecase *usecase.UserUseCase
+	UseCase *usecase.UserUseCase
 }
 
-func NewUserController(log *logrus.Logger, usecase *usecase.UserUseCase) *UserController {
-
+func NewUserController(useCase *usecase.UserUseCase, logger *logrus.Logger) *UserController {
 	return &UserController{
-		Log:     log,
-		Usecase: usecase,
+		Log:     logger,
+		UseCase: useCase,
 	}
-
 }
 
 func (c *UserController) Register(w http.ResponseWriter, r *http.Request) {
-	request := new(model.UserRegisterRequest)
+	// Parse request body
+	var request model.UserRegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		c.Log.WithError(err).Warnf("Failed to get body request")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: nil, Errors: "Body request not valid"})
+		c.Log.Warnf("Failed to parse request body: %+v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
-	userResponse, err := c.Usecase.Create(r.Context(), request)
+	// Panggil use case untuk membuat user
+	response, err := c.UseCase.Create(r.Context(), &request)
 	if err != nil {
-		c.Log.WithError(err).Warnf("Failed to register user")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: nil, Errors: "Failed to register"})
+		c.Log.Warnf("Failed to register user: %+v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err)) // helper untuk menentukan status code
 		return
 	}
 
+	// Kirim response JSON
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: userResponse})
-
+	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: response}); err != nil {
+		c.Log.Warnf("Failed to write response: %+v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func (c *UserController) Login(w http.ResponseWriter, r *http.Request) {
-
-	request := new(model.UserLoginRequest)
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		c.Log.WithError(err).Warnf("Failed to get body request")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: nil, Errors: "Body request not valid"})
-		return
-	}
-
-	userResponse, err := c.Usecase.Login(r.Context(), request)
-	if err != nil {
-		c.Log.WithError(err).Warnf("Failed to login user")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: nil, Errors: fmt.Sprintf("Failed to Login: %+v", err)})
-		return
-	}
-
+	// Set header content-type sebagai JSON
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: userResponse})
+
+	// Menutup body setelah selesai dibaca
+	defer r.Body.Close()
+
+	// Parsing request body
+	var request model.UserLoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		c.Log.Printf("Failed to parse request body: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	// Memanggil UseCase untuk login
+	response, err := c.UseCase.Login(r.Context(), &request)
+	if err != nil {
+		c.Log.Printf("Failed to login user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err)) // Gunakan helper status code
+		return
+	}
+
+	// Mengirimkan response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.UserResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func (c *UserController) Logout(w http.ResponseWriter, r *http.Request) {
 	auth := middleware.GetUser(r)
 
+	// Buat request untuk use case
 	request := &model.UserLogoutRequest{
 		Username: auth.Username,
 	}
 
-	response, err := c.Usecase.Logout(r.Context(), request)
+	// Panggil UseCase.Logout
+	response, err := c.UseCase.Logout(r.Context(), request)
 	if err != nil {
-		c.Log.WithError(err).Warnf("Failed to logout user")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(model.WebResponse[bool]{Data: false, Errors: fmt.Sprintf("Failed to Logout: %+v", err)})
+		c.Log.Printf("Failed to logout user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
 		return
 	}
 
+	// Set header sebagai JSON
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(model.WebResponse[bool]{Data: response})
 
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[bool]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }

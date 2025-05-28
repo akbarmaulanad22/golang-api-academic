@@ -126,12 +126,6 @@ func (c *UserUseCase) Login(ctx context.Context, request *model.UserLoginRequest
 		return nil, err
 	}
 
-	// end transaction
-
-	// create jwt token
-
-	//
-
 	return converter.UserToTokenResponse(user), nil
 
 }
@@ -182,47 +176,6 @@ func (c *UserUseCase) Delete(ctx context.Context, request *model.UserDeleteReque
 	// get user
 	user := new(entity.User)
 	err = c.Repository.FindByUsername(tx, user, request.Username)
-	if err != nil {
-		c.Log.Warnf("User not found : %+v", err)
-		return err
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
-		c.Log.Warnf("Failed to compare user password with bcrype hash : %+v", err)
-		return err
-	}
-
-	err = c.Repository.Delete(tx, user)
-	if err != nil {
-		c.Log.Warnf("Failed delete user : %+v", err)
-		return err
-	}
-
-	// commit db transaction
-	if err := tx.Commit().Error; err != nil {
-		c.Log.Warnf("Failed commit transaction : %+v", err)
-		return err
-	}
-
-	return nil
-}
-
-func (c *UserUseCase) DeleteById(ctx context.Context, request *model.UserDeleteByIdRequest) error {
-	// validate
-	err := c.Validate.Struct(request)
-	if err != nil {
-		c.Log.Warnf("Invalid request body: %+v", err)
-		return err
-	}
-
-	// start transaction
-
-	tx := c.DB.WithContext(ctx).Begin()
-	defer tx.Rollback()
-
-	// get user
-	user := new(entity.User)
-	err = c.Repository.FindById(tx, user, request.ID)
 	if err != nil {
 		c.Log.Warnf("User not found : %+v", err)
 		return err

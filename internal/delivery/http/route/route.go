@@ -29,8 +29,12 @@ func (route *RouteConfig) SetupGuestRoute() {
 }
 
 func (route *RouteConfig) SetupAuthRoute() {
-	// routes that require authentication
-	route.Router.Use(route.AuthMiddleware)
-	route.Router.HandleFunc("/logout", route.UserController.Logout).Methods("POST")
+
+	// Buat subrouter khusus untuk route yang butuh auth
+	authRouter := route.Router.PathPrefix("/").Subrouter()
+	authRouter.Use(route.AuthMiddleware)
+
+	authRouter.Use(route.AuthMiddleware)
+	authRouter.HandleFunc("/logout", route.UserController.Logout).Methods("POST")
 
 }

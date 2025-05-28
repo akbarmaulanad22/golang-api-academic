@@ -34,7 +34,7 @@ func NewMux(config *MuxConfig) {
 	// attendanceUseCase := usecase.NewAttendanceUseCase(config.DB, config.Log, config.Validate, scheduleRepository, attendanceRepository)
 
 	// setup controller
-	userController := http.NewUserController(config.Log, userUseCase)
+	userController := http.NewUserController(userUseCase, config.Log)
 	// attendanceController := http.newAttendance
 
 	// setup middleware
@@ -44,7 +44,6 @@ func NewMux(config *MuxConfig) {
 		Router:         config.Router,
 		UserController: userController,
 		AuthMiddleware: authMiddleware,
-		// AddressController: addressController,
 	}
 	routeConfig.Setup()
 
