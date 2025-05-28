@@ -3,10 +3,10 @@ package entity
 import "time"
 
 type Schedule struct {
-	Model
+	Entity
 	Date    time.Time `gorm:"column:date"`
-	StartAt time.Time `gorm:"column:start_at"`
-	EndAt   time.Time `gorm:"column:end_at"`
+	StartAt string    `gorm:"column:start_at"`
+	EndAt   string    `gorm:"column:end_at"`
 
 	// foreign key
 	CourseCode   int `gorm:"column:course_code"`

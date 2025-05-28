@@ -1,7 +1,7 @@
 package entity
 
 type Faculty struct {
-	Model
+	Entity
 	Code    string `gorm:"column:code"`
 	Name    string `gorm:"column:name"`
 	Dekan   string `gorm:"column:dekan"`

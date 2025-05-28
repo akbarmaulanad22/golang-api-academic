@@ -1,7 +1,11 @@
 package config
 
 import (
+	"tugasakhir/internal/delivery/http"
+	"tugasakhir/internal/delivery/http/middleware"
 	"tugasakhir/internal/delivery/http/route"
+	"tugasakhir/internal/repository"
+	"tugasakhir/internal/usecase"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -21,20 +25,25 @@ type MuxConfig struct {
 func NewMux(config *MuxConfig) {
 
 	// setup repositories
-	// userRepository := repository.NewUserRepository(config.Log)
+	userRepository := repository.NewUserRepository(config.Log)
+	// scheduleRepository := repository.NewScheduleRepository(config.Log)
+	// attendanceRepository := repository.NewAttendanceRepository(config.Log)
 
 	// setup use cases
-	// userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository, userProducer)
+	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
+	// attendanceUseCase := usecase.NewAttendanceUseCase(config.DB, config.Log, config.Validate, scheduleRepository, attendanceRepository)
 
 	// setup controller
-	// userController := http.NewUserController(userUseCase, config.Log)
+	userController := http.NewUserController(config.Log, userUseCase)
+	// attendanceController := http.newAttendance
 
 	// setup middleware
-	// authMiddleware := middleware.NewAuth(userUseCase)
+	authMiddleware := middleware.NewAuth(userUseCase)
 
 	routeConfig := route.RouteConfig{
-		Router: config.Router,
-		// AuthMiddleware:    authMiddleware,
+		Router:         config.Router,
+		UserController: userController,
+		AuthMiddleware: authMiddleware,
 		// AddressController: addressController,
 	}
 	routeConfig.Setup()

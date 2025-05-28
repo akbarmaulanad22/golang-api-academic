@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Attendance struct {
-	Model
+	Entity
 	Status string    `gorm:"column:status"`
 	Time   time.Time `gorm:"column:date"`
 

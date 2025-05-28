@@ -1,7 +1,7 @@
 package entity
 
 type Grade struct {
-	Model
+	Entity
 	Score int `gorm:"column:score"`
 
 	// foreign key

@@ -1,8 +1,7 @@
 package route
 
 import (
-	"fmt"
-	"net/http"
+	controller "tugasakhir/internal/delivery/http"
 
 	"github.com/gorilla/mux"
 )
@@ -10,10 +9,12 @@ import (
 type RouteConfig struct {
 	// router
 	Router *mux.Router
+
 	// middleware
+	AuthMiddleware mux.MiddlewareFunc
 
 	// all field controller
-
+	UserController *controller.UserController
 }
 
 func (route *RouteConfig) Setup() {
@@ -22,12 +23,14 @@ func (route *RouteConfig) Setup() {
 }
 
 func (route *RouteConfig) SetupGuestRoute() {
-	route.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "test")
-	})
 	// routes that do not require authentication
+	route.Router.HandleFunc("/register", route.UserController.Register).Methods("POST")
+	route.Router.HandleFunc("/login", route.UserController.Login).Methods("POST")
 }
 
 func (route *RouteConfig) SetupAuthRoute() {
 	// routes that require authentication
+	route.Router.Use(route.AuthMiddleware)
+	route.Router.HandleFunc("/logout", route.UserController.Logout).Methods("POST")
+
 }

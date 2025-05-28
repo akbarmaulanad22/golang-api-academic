@@ -1,7 +1,7 @@
 package entity
 
 type GradeComponent struct {
-	Model
+	Entity
 	Name   string `gorm:"column:name"`
 	Weight int    `gorm:"column:weight"`
 }

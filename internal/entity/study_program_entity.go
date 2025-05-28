@@ -1,7 +1,7 @@
 package entity
 
 type StudyProgram struct {
-	Model
+	Entity
 	Name             string `gorm:"column:name"`
 	Level            string `gorm:"column:level"`
 	Accreditation    string `gorm:"column:accreditation"`

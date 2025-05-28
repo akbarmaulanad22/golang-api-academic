@@ -1,6 +1,6 @@
 package entity
 
 type Role struct {
-	Model
+	Entity
 	Name string `gorm:"column:name"`
 }
