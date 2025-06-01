@@ -3,12 +3,12 @@ package entity
 import "time"
 
 type Student struct {
-	Nim             uint      `gorm:"column:nim;primaryKey"`
-	Class           string    `gorm:"column:class"`
-	RegistarionWave string    `gorm:"column:applicantWave"`
-	RegistarionDate time.Time `gorm:"column:batch_year"`
-	CreatedAt       time.Time `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt       time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+	Nim              uint      `gorm:"column:nim;primaryKey"`
+	Class            string    `gorm:"column:class"`
+	RegistrationWave string    `gorm:"column:registration_wave"`
+	RegistrationDate time.Time `gorm:"column:registration_date"`
+	CreatedAt        time.Time `gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt        time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
 
 	// embedded data
 	Biodata StudentBio `gorm:"embedded"`

@@ -40,7 +40,7 @@ func NewAttendanceUseCase(
 
 }
 
-func (c *AttendanceUseCase) Attend(ctx context.Context, request *model.AttendanceCreateResponse) (*model.AttendanceResponse, error) {
+func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.AttendanceCreateResponse) (*model.AttendanceResponse, error) {
 
 	// validate
 	err := c.Validate.Struct(request)

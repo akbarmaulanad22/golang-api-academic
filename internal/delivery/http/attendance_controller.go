@@ -23,7 +23,7 @@ func NewAttendanceController(useCase *usecase.AttendanceUseCase, logger *logrus.
 	}
 }
 
-func (c *AttendanceController) Create(w http.ResponseWriter, r *http.Request) {
+func (c *AttendanceController) AttendStudent(w http.ResponseWriter, r *http.Request) {
 
 	auth := middleware.GetUser(r)
 
@@ -33,7 +33,7 @@ func (c *AttendanceController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Panggil UseCase.Logout
-	response, err := c.UseCase.Attend(r.Context(), request)
+	response, err := c.UseCase.AttendStudent(r.Context(), request)
 	if err != nil {
 		c.Log.Printf("Failed to attend user: %v", err)
 		http.Error(w, err.Error(), helper.GetStatusCode(err))

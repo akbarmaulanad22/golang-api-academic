@@ -19,8 +19,8 @@ func NewScheduleRepository(log *logrus.Logger) *ScheduleRepository {
 
 }
 
-// GetActiveScheduleID - ambil schedule_id berdasarkan user_id
-func (r ScheduleRepository) GetActiveScheduleIDByUserID(db *gorm.DB, userID uint) (uint, error) {
+// GetActiveScheduleID - ambil schedule_id 30 menit kedepan berdasarkan user_id
+func (r *ScheduleRepository) GetActiveScheduleIDByUserID(db *gorm.DB, userID uint) (uint, error) {
 
 	var scheduleID uint
 	err := db.Raw(`
@@ -45,4 +45,43 @@ func (r ScheduleRepository) GetActiveScheduleIDByUserID(db *gorm.DB, userID uint
 	}
 
 	return scheduleID, nil
+}
+
+// GetActiveScheduleID - ambil schedule_id berdasarkan user_id
+func (r ScheduleRepository) GetScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
+
+	// var schedules []entity.Schedule
+
+	// SELECT c.name AS course, l.name AS lecturer, cr.name AS classroom, s.start_at, s.end_at
+
+	// err := db.Raw(`
+	// 	SELECT c.name, l.name, cr.name, s.start_at, s.end_at
+	// 	FROM students st
+	// 	JOIN enrollments e ON st.npm = e.student_npm
+	// 	JOIN schedules s ON e.schedule_id = s.id
+	// 	JOIN courses c ON s.course_code = c.code
+	// 	JOIN lecturers l ON s.lecturer_nidn = l.nidn
+	// 	JOIN classrooms cr ON s.classroom_id = cr.id
+	// 	WHERE st.user_id = 3
+	// 		AND s.date = CURDATE()
+	// 	ORDER BY s.start_at
+	// `, userID).Scan(&schedules).Error
+
+	var schedules []entity.Schedule
+
+	err := db.Model(&entity.Schedule{}).
+		Joins("JOIN enrollments ON enrollments.schedule_id = schedules.id").
+		Joins("JOIN students ON students.npm = enrollments.student_npm").
+		Preload("Lecturer").
+		Preload("Course").
+		Preload("Classroom").
+		Where("students.user_id = ? AND schedules.date = CURDATE()", userID).
+		Order("schedules.start_at").
+		Find(&schedules).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return schedules, nil
 }

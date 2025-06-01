@@ -44,8 +44,3 @@ func (r *AttendanceRepository) HasAlreadyAttended(db *gorm.DB, userID uint, sche
 
 	return count > 0
 }
-
-func (r *AttendanceRepository) Create(db *gorm.DB, entity *entity.Attendance) error {
-
-	return db.Create(entity).Error
-}
