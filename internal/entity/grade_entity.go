@@ -5,8 +5,8 @@ type Grade struct {
 	Score int `gorm:"column:score"`
 
 	// foreign key
-	EnrollmentId     int `gorm:"column:enrollment_id"`
-	GradeComponentId int `gorm:"column:grade_component_id"`
+	EnrollmentId     uint `gorm:"column:enrollment_id"`
+	GradeComponentId uint `gorm:"column:grade_component_id"`
 
 	// relationship
 	Enrollment     Enrollment     `gorm:"foreignKey:enrollment_id;references:id"`

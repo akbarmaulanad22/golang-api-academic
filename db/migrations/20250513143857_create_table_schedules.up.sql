@@ -4,7 +4,7 @@ CREATE TABLE schedules (
     start_at TIME,
     end_at TIME,
     course_code VARCHAR(20),
-    lecturer_nidn VARCHAR(50),
+    lecturer_nidn INT,
     classroom_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

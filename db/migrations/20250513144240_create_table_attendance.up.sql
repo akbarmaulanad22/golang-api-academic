@@ -1,4 +1,4 @@
-CREATE TABLE attendance (
+CREATE TABLE attendances (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     schedule_id INT,

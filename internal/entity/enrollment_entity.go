@@ -9,8 +9,8 @@ type Enrollment struct {
 	DateRegistration time.Time
 
 	// foreign key
-	StudentNpm int `gorm:"column:student_npm"`
-	ScheduleId int `gorm:"column:schedule_id"`
+	StudentNpm string `gorm:"column:student_npm"`
+	ScheduleId uint   `gorm:"column:schedule_id"`
 
 	// relationship
 	Student  Student  `gorm:"foreignKey:student_npm;references:npm"`

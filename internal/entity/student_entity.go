@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Student struct {
-	Nim             int       `gorm:"column:nim;primaryKey"`
+	Nim             uint      `gorm:"column:nim;primaryKey"`
 	Class           string    `gorm:"column:class"`
 	RegistarionWave string    `gorm:"column:applicantWave"`
 	RegistarionDate time.Time `gorm:"column:batch_year"`
@@ -14,8 +14,8 @@ type Student struct {
 	Biodata StudentBio `gorm:"embedded"`
 
 	// foreign key
-	UserId         int `gorm:"column:user_id"`
-	StudyProgramId int `gorm:"column:study_program_id"`
+	UserId         uint `gorm:"column:user_id"`
+	StudyProgramId uint `gorm:"column:study_program_id"`
 
 	// relationship belongs to (one to one)
 	User         *User         `gorm:"foreignKey:user_id;references:id"`

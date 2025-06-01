@@ -11,8 +11,8 @@ type Course struct {
 	UpdatedAt time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
 
 	// foreign key
-	StudyProgramId int `gorm:"column:study_program_id"`
-	LecturerId     int `gorm:"column:lecturer_id"`
+	StudyProgramId uint `gorm:"column:study_program_id"`
+	LecturerId     uint `gorm:"column:lecturer_id"`
 
 	// relationship
 	StudyProgram []StudyProgram `gorm:"many2many:study_program_course"`

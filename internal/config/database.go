@@ -64,3 +64,5 @@ type logrusWriter struct {
 func (l *logrusWriter) Printf(message string, args ...interface{}) {
 	l.Logger.Tracef(message, args...)
 }
+
+// migrate -database "mysql://root@tcp(localhost:3306)/db_belajar_golang_migration" -path db/migrations down

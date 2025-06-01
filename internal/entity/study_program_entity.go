@@ -8,7 +8,7 @@ type StudyProgram struct {
 	DurationSemester int    `gorm:"column:duration_semester"`
 
 	// foreign key
-	FacultyId int `gorm:"column:faculty_id"`
+	FacultyId uint `gorm:"column:faculty_id"`
 
 	// relationship
 	Faculty Faculty `gorm:"foreignKey:faculty_id;references:id"`

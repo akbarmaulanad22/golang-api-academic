@@ -217,7 +217,7 @@ func (c *UserUseCase) Verify(ctx context.Context, request *model.VerifyUserReque
 		return nil, err
 	}
 
-	return &model.Auth{Username: user.Username}, nil
+	return &model.Auth{Username: user.Username, ID: user.ID}, nil
 }
 
 func (c *UserUseCase) Current(ctx context.Context, request *model.GetUserRequest) (*model.UserResponse, error) {

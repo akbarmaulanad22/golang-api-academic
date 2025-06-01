@@ -8,13 +8,13 @@ type Schedule struct {
 	StartAt string    `gorm:"column:start_at"`
 	EndAt   string    `gorm:"column:end_at"`
 
-	// foreign key
-	CourseCode   int `gorm:"column:course_code"`
-	LecturerNIDN int `gorm:"column:lecturer_nidn"`
-	ClassroomId  int `gorm:"column:classroom_id"`
+	// Foreign Keys
+	CourseCode   string `gorm:"column:course_code"`
+	LecturerNIDN uint   `gorm:"column:lecturer_nidn"`
+	ClassroomID  uint   `gorm:"column:classroom_id"`
 
-	// relationship
-	Course    Course    `gorm:"foreignKey:course_code;references:code"`
-	Lecturer  Lecturer  `gorm:"foreignKey:lecturer_nidn:references:nidn"`
-	Classroom Classroom `gorm:"foreignKey:classroom_id;references:id"`
+	// Relationships
+	Course    Course    `gorm:"foreignKey:CourseCode;references:Code"`
+	Lecturer  Lecturer  `gorm:"foreignKey:LecturerNIDN;references:Nidn"`
+	Classroom Classroom `gorm:"foreignKey:ClassroomID;references:ID"`
 }

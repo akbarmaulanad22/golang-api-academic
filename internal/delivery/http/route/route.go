@@ -14,7 +14,8 @@ type RouteConfig struct {
 	AuthMiddleware mux.MiddlewareFunc
 
 	// all field controller
-	UserController *controller.UserController
+	UserController       *controller.UserController
+	AttendanceController *controller.AttendanceController
 }
 
 func (route *RouteConfig) Setup() {
@@ -34,7 +35,11 @@ func (route *RouteConfig) SetupAuthRoute() {
 	authRouter := route.Router.PathPrefix("/").Subrouter()
 	authRouter.Use(route.AuthMiddleware)
 
-	authRouter.Use(route.AuthMiddleware)
 	authRouter.HandleFunc("/logout", route.UserController.Logout).Methods("POST")
+
+	authRouter = route.Router.PathPrefix("/api/v1/").Subrouter()
+	authRouter.Use(route.AuthMiddleware)
+
+	authRouter.HandleFunc("/attendance", route.AttendanceController.Create).Methods("POST")
 
 }

@@ -1,5 +1,5 @@
 CREATE TABLE lecturers (
-    nidn VARCHAR(50) PRIMARY KEY,
+    nidn INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     gender VARCHAR(10),
     degree VARCHAR(100),
