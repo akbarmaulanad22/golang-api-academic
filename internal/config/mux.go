@@ -28,16 +28,19 @@ func NewMux(config *MuxConfig) {
 	userRepository := repository.NewUserRepository(config.Log)
 	scheduleRepository := repository.NewScheduleRepository(config.Log)
 	attendanceRepository := repository.NewAttendanceRepository(config.Log)
+	enrollmentRepository := repository.NewEnrollmentRepository(config.Log)
 
 	// setup use cases
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
 	attendanceUseCase := usecase.NewAttendanceUseCase(config.DB, config.Log, config.Validate, attendanceRepository, scheduleRepository)
 	scheduleUseCase := usecase.NewScheduleUseCase(config.DB, config.Log, config.Validate, scheduleRepository)
+	enrollmentUseCase := usecase.NewEnrollmentUseCase(config.DB, config.Log, config.Validate, enrollmentRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
 	attendanceController := http.NewAttendanceController(attendanceUseCase, config.Log)
 	scheduleController := http.NewScheduleController(scheduleUseCase, config.Log)
+	enrollmentController := http.NewEnrollmentController(enrollmentUseCase, config.Log)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
@@ -48,6 +51,7 @@ func NewMux(config *MuxConfig) {
 		UserController:       userController,
 		AttendanceController: attendanceController,
 		ScheduleController:   scheduleController,
+		EnrollmentController: enrollmentController,
 	}
 	routeConfig.Setup()
 

@@ -4,9 +4,9 @@ CREATE TABLE enrollments (
     academic_year VARCHAR(20),
     registration_date DATE,
     student_npm VARCHAR(20),
-    schedule_id INT,
+    course_code VARCHAR(20),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (student_npm) REFERENCES students(npm),
-    FOREIGN KEY (schedule_id) REFERENCES schedules(id)
+    FOREIGN KEY (course_code) REFERENCES courses(code)
 );

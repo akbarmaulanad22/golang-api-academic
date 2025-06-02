@@ -4,15 +4,15 @@ import "time"
 
 type Enrollment struct {
 	Entity
-	Status           string `gorm:"column:status"`
-	AcademicYear     string `gorm:"column:academic_year"`
-	DateRegistration time.Time
+	Status           string    `gorm:"column:status"`
+	AcademicYear     string    `gorm:"column:academic_year"`
+	RegistrationDate time.Time `gorm:"column:registration_date"`
 
 	// foreign key
 	StudentNpm string `gorm:"column:student_npm"`
-	ScheduleId uint   `gorm:"column:schedule_id"`
+	CourseCode string `gorm:"column:course_code"`
 
 	// relationship
-	Student  Student  `gorm:"foreignKey:student_npm;references:npm"`
-	Schedule Schedule `gorm:"foreignKey:schedule_id;references:id"`
+	Student Student `gorm:"foreignKey:student_npm;references:npm"`
+	Course  Course  `gorm:"foreignKey:course_code;references:code"`
 }

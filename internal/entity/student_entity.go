@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Student struct {
-	Nim              uint      `gorm:"column:nim;primaryKey"`
+	Npm              uint      `gorm:"column:npm;primaryKey"`
 	Class            string    `gorm:"column:class"`
 	RegistrationWave string    `gorm:"column:registration_wave"`
 	RegistrationDate time.Time `gorm:"column:registration_date"`

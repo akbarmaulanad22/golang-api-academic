@@ -17,6 +17,7 @@ type RouteConfig struct {
 	UserController       *controller.UserController
 	AttendanceController *controller.AttendanceController
 	ScheduleController   *controller.ScheduleController
+	EnrollmentController *controller.EnrollmentController
 }
 
 func (route *RouteConfig) Setup() {
@@ -41,7 +42,10 @@ func (route *RouteConfig) SetupAuthRoute() {
 	authRouter = route.Router.PathPrefix("/api/v1/").Subrouter()
 	authRouter.Use(route.AuthMiddleware)
 
-	authRouter.HandleFunc("/attendance", route.AttendanceController.AttendStudent).Methods("POST")
+	student := authRouter.PathPrefix("/student").Subrouter()
 
-	authRouter.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
+	student.HandleFunc("/attendance", route.AttendanceController.AttendStudent).Methods("POST")
+	student.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
+	student.HandleFunc("/enrollments", route.EnrollmentController.List).Methods("GET")
+
 }
