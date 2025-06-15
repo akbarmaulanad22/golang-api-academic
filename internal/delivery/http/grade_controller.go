@@ -22,13 +22,17 @@ func NewGradeController(useCase *usecase.GradeUseCase, logger *logrus.Logger) *G
 	}
 }
 
-func (c *GradeController) List(w http.ResponseWriter, r *http.Request) {
+func (c *GradeController) ListByStudentUserID(w http.ResponseWriter, r *http.Request) {
 
 	// get user by context in middleware
 	auth := middleware.GetUser(r)
 
+	request := &model.ListGradeRequest{
+		UserID: auth.ID,
+	}
+
 	// Panggil UseCase
-	response, err := c.UseCase.GetCourseGrades(r.Context(), auth.ID)
+	response, err := c.UseCase.ListByStudentUserID(r.Context(), request)
 	if err != nil {
 		c.Log.Printf("Failed to get grades: %v", err)
 		http.Error(w, "Failed to get grades", http.StatusInternalServerError)

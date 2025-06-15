@@ -48,7 +48,7 @@ func (r *ScheduleRepository) GetStudentActiveScheduleIDByUserID(db *gorm.DB, use
 }
 
 // GetActiveScheduleID - ambil schedule_id berdasarkan user_id
-func (r *ScheduleRepository) GetScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
+func (r *ScheduleRepository) FindAllScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
 
 	var schedules []entity.Schedule
 

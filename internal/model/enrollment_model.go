@@ -7,3 +7,7 @@ type EnrollmentResponse struct {
 	Sks          int    `json:"sks"`
 	Semester     int    `json:"semester"`
 }
+
+type ListEnrollmentRequest struct {
+	UserID uint `json:"user_id"`
+}

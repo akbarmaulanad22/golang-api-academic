@@ -35,12 +35,12 @@ func NewScheduleUseCase(
 
 }
 
-func (c *ScheduleUseCase) GetScheduleTodayByStudentUserID(ctx context.Context, userID uint) ([]model.ScheduleResponse, error) {
+func (c *ScheduleUseCase) ListScheduleTodayByStudentUserID(ctx context.Context, request *model.ListScheduleRequest) ([]model.ScheduleResponse, error) {
 	// start transaction
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
-	schedules, err := c.ScheduleRepository.GetScheduleTodayByStudentUserID(tx, userID)
+	schedules, err := c.ScheduleRepository.FindAllScheduleTodayByStudentUserID(tx, request.UserID)
 
 	if err != nil {
 		return nil, err

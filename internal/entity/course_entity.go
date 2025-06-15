@@ -12,15 +12,8 @@ type Course struct {
 	UpdatedAt     time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
 
 	// foreign key
-	LecturerId uint `gorm:"column:lecturer_id"`
+	LecturerNIDN uint `gorm:"column:lecturer_nidn"`
 
 	// relationship
 	StudyProgram []StudyProgram `gorm:"many2many:study_program_course"`
-}
-
-// Untuk join manual
-type CourseWithMeetings struct {
-	Code          string `gorm:"column:code"`
-	Name          string `gorm:"column:name"`
-	TotalMeetings int64  `gorm:"column:total_meetings"`
 }

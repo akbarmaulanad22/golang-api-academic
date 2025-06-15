@@ -36,12 +36,3 @@ func (r *GradeRepository) SaveAttendanceGrade(db *gorm.DB, enrollmentID uint, sc
 	}
 	return db.Create(&newGrade).Error
 }
-
-// Ambil semua nilai per enrollment
-func (r *GradeRepository) GetAllGradesByEnrollmentID(db *gorm.DB, enrollmentID uint) ([]entity.Grade, error) {
-	var grades []entity.Grade
-	err := db.Where("enrollment_id = ?", enrollmentID).
-		Preload("GradeComponent").
-		Find(&grades).Error
-	return grades, err
-}

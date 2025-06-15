@@ -35,12 +35,12 @@ func NewEnrollmentUseCase(
 
 }
 
-func (c *EnrollmentUseCase) GetEnrollmentByStudentUserID(ctx context.Context, userID uint) ([]model.EnrollmentResponse, error) {
+func (c *EnrollmentUseCase) ListByStudentUserID(ctx context.Context, request *model.ListEnrollmentRequest) ([]model.EnrollmentResponse, error) {
 	// start transaction
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
-	schedules, err := c.EnrollmentRepository.GetEnrollmentByStudentUserID(tx, userID)
+	schedules, err := c.EnrollmentRepository.FindAllEnrollmentByStudentUserID(tx, request.UserID)
 
 	if err != nil {
 		return nil, err

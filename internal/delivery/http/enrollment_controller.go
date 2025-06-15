@@ -23,12 +23,16 @@ func NewEnrollmentController(useCase *usecase.EnrollmentUseCase, logger *logrus.
 	}
 }
 
-func (c *EnrollmentController) List(w http.ResponseWriter, r *http.Request) {
+func (c *EnrollmentController) ListByStudentUserID(w http.ResponseWriter, r *http.Request) {
 
 	auth := middleware.GetUser(r)
 
+	request := &model.ListEnrollmentRequest{
+		UserID: auth.ID,
+	}
+
 	// Panggil UseCase
-	response, err := c.UseCase.GetEnrollmentByStudentUserID(r.Context(), auth.ID)
+	response, err := c.UseCase.ListByStudentUserID(r.Context(), request)
 	if err != nil {
 		c.Log.Printf("Failed to get enrollment: %v", err)
 		http.Error(w, err.Error(), helper.GetStatusCode(err))

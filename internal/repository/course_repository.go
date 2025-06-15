@@ -18,20 +18,13 @@ func NewCourseRepository(log *logrus.Logger) *CourseRepository {
 
 }
 
-func (r *CourseRepository) GetCoursesByNPM(db *gorm.DB, npm uint) ([]entity.CourseWithMeetings, error) {
-	var courses []entity.CourseWithMeetings
-
-	err := db.Raw(`
-        SELECT 
-            c.code AS code,
-            c.name AS name,
-            COUNT(s.id) AS total_meetings
-        FROM enrollments e
-        JOIN schedules s ON e.schedule_id = s.id
-        JOIN courses c ON s.course_code = c.code
-        WHERE e.student_npm = ?
-        GROUP BY c.code;
-    `, npm).Scan(&courses).Error
-
-	return courses, err
+func (r *CourseRepository) FindAllByNIDNUserID(db *gorm.DB, userID uint) ([]entity.Course, error) {
+	var courses []entity.Course
+	if err := db.
+		Joins("JOIN lecturers ON courses.lecturer_nidn = lecturers.nidn").
+		Where("lecturers.user_id = ?", userID).
+		Find(&courses).Error; err != nil {
+		return nil, err
+	}
+	return courses, nil
 }

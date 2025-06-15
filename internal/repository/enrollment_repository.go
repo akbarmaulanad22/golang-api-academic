@@ -19,7 +19,7 @@ func NewEnrollmentRepository(log *logrus.Logger) *EnrollmentRepository {
 }
 
 // GetActiveEnrollmentID - ambil enrollment berdasarkan user_id
-func (r EnrollmentRepository) GetEnrollmentByStudentUserID(db *gorm.DB, userID uint) ([]entity.Enrollment, error) {
+func (r EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, userID uint) ([]entity.Enrollment, error) {
 
 	var enrollments []entity.Enrollment
 
