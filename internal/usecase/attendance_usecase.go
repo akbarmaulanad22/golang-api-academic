@@ -54,7 +54,7 @@ func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.At
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
-	scheduleID, err := c.ScheduleRepository.GetActiveScheduleIDByUserID(tx, request.UserId)
+	scheduleID, err := c.ScheduleRepository.GetStudentActiveScheduleIDByUserID(tx, request.UserId)
 	if err != nil {
 		c.Log.Warnf("Failed get active schedule : %+v", err)
 		return nil, err
@@ -90,5 +90,43 @@ func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.At
 	}
 
 	// return converter.AttendanceToResponse(attendance), nil
+	return converter.AttendanceToResponse(attendance), nil
+}
+
+func (uc *AttendanceUseCase) AttendLecturer(ctx context.Context, request *model.AttendanceCreateResponse) (*model.AttendanceResponse, error) {
+	tx := uc.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	// 1. Cari jadwal aktif
+	scheduleID, err := uc.ScheduleRepository.GetLecturerActiveScheduleByUserID(tx, request.UserId)
+	if err != nil {
+		uc.Log.Warnf("Failed get active schedule : %+v", err)
+		return nil, err
+	}
+
+	// 2. Cek apakah dosen sudah pernah absen hari ini
+	if uc.AttendanceRepository.HasAlreadyAttended(tx, request.UserId, scheduleID) {
+		uc.Log.Warnf("failed to check lecturer status : %+v", err)
+		return nil, err
+	}
+
+	// 3. Simpan absensi
+	attendance := &entity.Attendance{
+		UserId:     request.UserId,
+		ScheduleId: scheduleID,
+		Status:     "Hadir",
+		Time:       time.Now(),
+	}
+
+	if err := uc.AttendanceRepository.Create(tx, attendance); err != nil {
+		uc.Log.Warnf("Failed create attendance to database : %+v", err)
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		uc.Log.Printf("failed commit transaction: %v", err)
+		return nil, err
+	}
+
 	return converter.AttendanceToResponse(attendance), nil
 }

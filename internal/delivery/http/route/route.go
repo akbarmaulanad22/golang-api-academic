@@ -49,4 +49,8 @@ func (route *RouteConfig) SetupAuthRoute() {
 	student.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
 	student.HandleFunc("/enrollments", route.EnrollmentController.List).Methods("GET")
 	student.HandleFunc("/grades", route.GradeController.List).Methods("GET")
+
+	lecturer := authRouter.PathPrefix("/lecturer").Subrouter()
+	lecturer.HandleFunc("/attendance", route.AttendanceController.AttendLecturer).Methods("POST")
+
 }

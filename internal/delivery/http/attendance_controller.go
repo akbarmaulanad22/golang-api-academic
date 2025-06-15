@@ -50,3 +50,31 @@ func (c *AttendanceController) AttendStudent(w http.ResponseWriter, r *http.Requ
 	}
 
 }
+
+func (c *AttendanceController) AttendLecturer(w http.ResponseWriter, r *http.Request) {
+
+	auth := middleware.GetUser(r)
+
+	// Buat request untuk use case
+	request := &model.AttendanceCreateResponse{
+		UserId: auth.ID,
+	}
+
+	// Panggil UseCase.Logout
+	response, err := c.UseCase.AttendLecturer(r.Context(), request)
+	if err != nil {
+		c.Log.Printf("Failed to attend user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Set header sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.AttendanceResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+}
