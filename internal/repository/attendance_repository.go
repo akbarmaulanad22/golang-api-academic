@@ -44,3 +44,14 @@ func (r *AttendanceRepository) HasAlreadyAttended(db *gorm.DB, userID uint, sche
 
 	return count > 0
 }
+
+func (r *AttendanceRepository) CountAttendance(db *gorm.DB, userID uint, courseCode string) (int64, error) {
+	var count int64
+	err := db.Raw(`
+        SELECT COUNT(*) FROM attendance a
+        JOIN schedules s ON a.schedule_id = s.id
+        WHERE a.user_id = ? AND s.course_code = ?
+          AND a.status IN (?, ?)
+    `, userID, courseCode, "Hadir", "Terlambat").Scan(&count).Error
+	return count, err
+}

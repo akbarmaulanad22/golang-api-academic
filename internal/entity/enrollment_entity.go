@@ -15,4 +15,6 @@ type Enrollment struct {
 	// relationship
 	Student Student `gorm:"foreignKey:student_npm;references:npm"`
 	Course  Course  `gorm:"foreignKey:course_code;references:code"`
+
+	Grade []Grade `gorm:"foreignKey:enrollment_id;references:id"`
 }

@@ -2,7 +2,7 @@ package entity
 
 type Grade struct {
 	Entity
-	Score int `gorm:"column:score"`
+	Score float64 `gorm:"column:score"`
 
 	// foreign key
 	EnrollmentId     uint `gorm:"column:enrollment_id"`

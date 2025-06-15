@@ -18,6 +18,7 @@ type RouteConfig struct {
 	AttendanceController *controller.AttendanceController
 	ScheduleController   *controller.ScheduleController
 	EnrollmentController *controller.EnrollmentController
+	GradeController      *controller.GradeController
 }
 
 func (route *RouteConfig) Setup() {
@@ -47,5 +48,5 @@ func (route *RouteConfig) SetupAuthRoute() {
 	student.HandleFunc("/attendance", route.AttendanceController.AttendStudent).Methods("POST")
 	student.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
 	student.HandleFunc("/enrollments", route.EnrollmentController.List).Methods("GET")
-
+	student.HandleFunc("/grades", route.GradeController.List).Methods("GET")
 }

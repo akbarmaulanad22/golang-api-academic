@@ -29,18 +29,22 @@ func NewMux(config *MuxConfig) {
 	scheduleRepository := repository.NewScheduleRepository(config.Log)
 	attendanceRepository := repository.NewAttendanceRepository(config.Log)
 	enrollmentRepository := repository.NewEnrollmentRepository(config.Log)
+	courseRepository := repository.NewCourseRepository(config.Log)
+	gradeRepository := repository.NewGradeRepository(config.Log)
 
 	// setup use cases
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
 	attendanceUseCase := usecase.NewAttendanceUseCase(config.DB, config.Log, config.Validate, attendanceRepository, scheduleRepository)
 	scheduleUseCase := usecase.NewScheduleUseCase(config.DB, config.Log, config.Validate, scheduleRepository)
 	enrollmentUseCase := usecase.NewEnrollmentUseCase(config.DB, config.Log, config.Validate, enrollmentRepository)
+	gradeUseCase := usecase.NewGradeUseCase(config.DB, config.Log, config.Validate, gradeRepository, scheduleRepository, attendanceRepository, courseRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
 	attendanceController := http.NewAttendanceController(attendanceUseCase, config.Log)
 	scheduleController := http.NewScheduleController(scheduleUseCase, config.Log)
 	enrollmentController := http.NewEnrollmentController(enrollmentUseCase, config.Log)
+	gradeController := http.NewGradeController(gradeUseCase, config.Log)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
@@ -52,6 +56,7 @@ func NewMux(config *MuxConfig) {
 		AttendanceController: attendanceController,
 		ScheduleController:   scheduleController,
 		EnrollmentController: enrollmentController,
+		GradeController:      gradeController,
 	}
 	routeConfig.Setup()
 

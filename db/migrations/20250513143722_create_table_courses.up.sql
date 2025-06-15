@@ -3,8 +3,9 @@ CREATE TABLE courses (
     name VARCHAR(100) NOT NULL,
     sks INT,
     semester INT,
-    study_program_id INT NOT NULL,
+    total_meetings INT,
+    lecturer_nidn INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (study_program_id) REFERENCES study_programs(id)
+    FOREIGN KEY (lecturer_nidn) REFERENCES lecturers(nidn)
 );

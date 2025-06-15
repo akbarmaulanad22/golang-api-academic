@@ -48,7 +48,7 @@ func (r *ScheduleRepository) GetActiveScheduleIDByUserID(db *gorm.DB, userID uin
 }
 
 // GetActiveScheduleID - ambil schedule_id berdasarkan user_id
-func (r ScheduleRepository) GetScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
+func (r *ScheduleRepository) GetScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
 
 	// var schedules []entity.Schedule
 
@@ -84,4 +84,13 @@ func (r ScheduleRepository) GetScheduleTodayByStudentUserID(db *gorm.DB, userID 
 	}
 
 	return schedules, nil
+}
+
+// Hitung jumlah pertemuan per course
+func (r *ScheduleRepository) GetTotalMeetingsByCourseCode(db *gorm.DB, courseCode string) (int64, error) {
+	var total int64
+	err := db.Table("schedules").
+		Where("course_code = ?", courseCode).
+		Count(&total).Error
+	return total, err
 }
