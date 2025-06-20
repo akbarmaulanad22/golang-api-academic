@@ -6,6 +6,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ScheduleRepository struct {
@@ -48,7 +49,7 @@ func (r *ScheduleRepository) GetStudentActiveScheduleIDByUserID(db *gorm.DB, use
 }
 
 // GetActiveScheduleID - ambil schedule_id berdasarkan user_id
-func (r *ScheduleRepository) FindAllScheduleTodayByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
+func (r *ScheduleRepository) FindAllScheduleByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
 
 	var schedules []entity.Schedule
 
@@ -58,8 +59,11 @@ func (r *ScheduleRepository) FindAllScheduleTodayByStudentUserID(db *gorm.DB, us
 		Preload("Lecturer").
 		Preload("Course").
 		Preload("Classroom").
-		Where("students.user_id = ? AND schedules.date = CURDATE()", userID).
-		Order("schedules.start_at").
+		Where("students.user_id = ? AND schedules.date >= CURDATE()", userID).
+		Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+			{Column: clause.Column{Name: "schedules.date"}, Desc: true},
+			{Column: clause.Column{Name: "schedules.start_at"}, Desc: false},
+		}}).
 		Find(&schedules).Error
 
 	if err != nil {
@@ -103,4 +107,21 @@ func (r ScheduleRepository) GetLecturerActiveScheduleByUserID(db *gorm.DB, userI
 
 	return scheduleID, nil
 
+}
+
+func (r ScheduleRepository) FindAllSchedulesByLecturerUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
+	var schedules []entity.Schedule
+
+	err := db.Model(&entity.Schedule{}).
+		Joins("JOIN lecturers ON lecturers.nidn = schedules.lecturer_nidn").
+		Preload("Course").
+		Preload("Classroom").
+		Where("lecturers.user_id = ? AND schedules.date >= CURDATE()", userID).
+		Order(clause.OrderBy{Columns: []clause.OrderByColumn{
+			{Column: clause.Column{Name: "schedules.date"}, Desc: true},
+			{Column: clause.Column{Name: "schedules.start_at"}, Desc: false},
+		}}).
+		Find(&schedules).Error
+
+	return schedules, err
 }

@@ -35,12 +35,32 @@ func NewScheduleUseCase(
 
 }
 
-func (c *ScheduleUseCase) ListScheduleTodayByStudentUserID(ctx context.Context, request *model.ListScheduleRequest) ([]model.ScheduleResponse, error) {
+func (c *ScheduleUseCase) ListScheduleByStudentUserID(ctx context.Context, request *model.ListScheduleRequest) ([]model.ScheduleResponse, error) {
 	// start transaction
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
-	schedules, err := c.ScheduleRepository.FindAllScheduleTodayByStudentUserID(tx, request.UserID)
+	schedules, err := c.ScheduleRepository.FindAllScheduleByStudentUserID(tx, request.UserID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// commit db transaction
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed commit transaction : %+v", err)
+		return nil, err
+	}
+
+	return converter.ScheduleToResponses(schedules), nil
+}
+
+func (c *ScheduleUseCase) ListScheduleByLecturerUserID(ctx context.Context, request *model.ListScheduleRequest) ([]model.ScheduleResponse, error) {
+	// start transaction
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	schedules, err := c.ScheduleRepository.FindAllSchedulesByLecturerUserID(tx, request.UserID)
 
 	if err != nil {
 		return nil, err

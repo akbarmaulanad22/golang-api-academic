@@ -12,6 +12,7 @@ func ScheduleToResponse(schedule entity.Schedule) model.ScheduleResponse {
 		Classroom: schedule.Classroom.Name,
 		StartAt:   schedule.StartAt,
 		EndAt:     schedule.EndAt,
+		Date:      schedule.Date,
 	}
 }
 

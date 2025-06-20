@@ -53,6 +53,7 @@ func (route *RouteConfig) SetupAuthRoute() {
 
 	lecturer := authRouter.PathPrefix("/lecturer").Subrouter()
 	lecturer.HandleFunc("/attendance", route.AttendanceController.AttendLecturer).Methods("POST")
-	lecturer.HandleFunc("/course", route.CourseController.ListByLecturerUserID).Methods("GET")
+	lecturer.HandleFunc("/courses", route.CourseController.ListByLecturerUserID).Methods("GET")
+	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
 
 }
