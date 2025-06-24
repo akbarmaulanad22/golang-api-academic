@@ -20,6 +20,7 @@ type RouteConfig struct {
 	EnrollmentController *controller.EnrollmentController
 	GradeController      *controller.GradeController
 	CourseController     *controller.CourseController
+	StudentController    *controller.StudentController
 }
 
 func (route *RouteConfig) Setup() {
@@ -54,6 +55,7 @@ func (route *RouteConfig) SetupAuthRoute() {
 	lecturer := authRouter.PathPrefix("/lecturer").Subrouter()
 	lecturer.HandleFunc("/attendance", route.AttendanceController.AttendLecturer).Methods("POST")
 	lecturer.HandleFunc("/courses", route.CourseController.ListByLecturerUserID).Methods("GET")
+	lecturer.HandleFunc("/courses/{courseCode}/students", route.StudentController.ListByCourseCode).Methods("GET")
 	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
 
 }
