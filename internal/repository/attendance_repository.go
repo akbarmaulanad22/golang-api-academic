@@ -55,3 +55,13 @@ func (r *AttendanceRepository) CountAttendance(db *gorm.DB, userID uint, courseC
     `, userID, courseCode, "Hadir", "Terlambat").Scan(&count).Error
 	return count, err
 }
+
+func (r *AttendanceRepository) FindAllByUserID(db *gorm.DB, UserID uint) ([]entity.Attendance, error) {
+	var attendances []entity.Attendance
+	if err := db.
+		Where("user_id = ?", UserID).
+		Find(&attendances).Error; err != nil {
+		return nil, err
+	}
+	return attendances, nil
+}

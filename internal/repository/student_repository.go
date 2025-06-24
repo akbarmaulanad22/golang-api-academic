@@ -30,3 +30,13 @@ func (r *StudentRepository) FindAllStudentByCouseCode(db *gorm.DB, courseCode st
 
 	return students, nil
 }
+
+func (r *StudentRepository) GetStudentUserIDByNPM(db *gorm.DB, npm uint) (uint, error) {
+
+	var userID uint
+	err := db.Raw(`
+        SELECT user_id FROM students st
+        WHERE st.npm = ?
+    `, npm).Scan(&userID).Error
+	return userID, err
+}
