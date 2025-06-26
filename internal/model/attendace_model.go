@@ -7,8 +7,9 @@ type AttendanceResponse struct {
 	Time   time.Time `json:"time"`
 }
 
-type AttendanceCreateResponse struct {
-	UserId uint `json:"user_id" validate:"required"`
+type AttendanceCreateRequest struct {
+	UserId uint   `json:"user_id" validate:"required"`
+	Status string `json:"status"`
 }
 
 type ListAttendanceRequest struct {
@@ -18,4 +19,9 @@ type ListAttendanceRequest struct {
 type ListInLecturerAttendanceRequest struct {
 	Npm        uint   `json:"npm"`
 	CourseCode string `json:"course_code"`
+}
+
+type AttendanceUpdateRequest struct {
+	ID     uint   `json:"-" validate:"required"`
+	Status string `json:"status"`
 }

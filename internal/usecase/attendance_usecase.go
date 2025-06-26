@@ -43,7 +43,7 @@ func NewAttendanceUseCase(
 
 }
 
-func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.AttendanceCreateResponse) (*model.AttendanceResponse, error) {
+func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.AttendanceCreateRequest) (*model.AttendanceResponse, error) {
 
 	// validate
 	err := c.Validate.Struct(request)
@@ -96,7 +96,7 @@ func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.At
 	return converter.AttendanceToResponse(attendance), nil
 }
 
-func (c *AttendanceUseCase) AttendLecturer(ctx context.Context, request *model.AttendanceCreateResponse) (*model.AttendanceResponse, error) {
+func (c *AttendanceUseCase) AttendLecturer(ctx context.Context, request *model.AttendanceCreateRequest) (*model.AttendanceResponse, error) {
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
@@ -184,4 +184,34 @@ func (c *AttendanceUseCase) ListByCourseCodeAndNpm(ctx context.Context, request 
 	}
 
 	return responses, nil
+}
+
+func (c *AttendanceUseCase) Update(ctx context.Context, request *model.AttendanceUpdateRequest) (*model.AttendanceResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.WithError(err).Error("failed to validate request body")
+		return nil, err
+	}
+
+	attendance := new(entity.Attendance)
+	if err := c.AttendanceRepository.FindById(tx, attendance, request.ID); err != nil {
+		c.Log.WithError(err).Error("failed to find attendance")
+		return nil, err
+	}
+
+	attendance.Status = request.Status
+
+	if err := c.AttendanceRepository.Update(tx, attendance); err != nil {
+		c.Log.WithError(err).Error("failed to update attendance")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return nil, err
+	}
+
+	return converter.AttendanceToResponse(attendance), nil
 }

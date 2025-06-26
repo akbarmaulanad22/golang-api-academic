@@ -30,7 +30,7 @@ func (c *AttendanceController) AttendStudent(w http.ResponseWriter, r *http.Requ
 	auth := middleware.GetUser(r)
 
 	// Buat request untuk use case
-	request := &model.AttendanceCreateResponse{
+	request := &model.AttendanceCreateRequest{
 		UserId: auth.ID,
 	}
 
@@ -58,7 +58,7 @@ func (c *AttendanceController) AttendLecturer(w http.ResponseWriter, r *http.Req
 	auth := middleware.GetUser(r)
 
 	// Buat request untuk use case
-	request := &model.AttendanceCreateResponse{
+	request := &model.AttendanceCreateRequest{
 		UserId: auth.ID,
 	}
 
@@ -148,6 +148,49 @@ func (c *AttendanceController) ListByCourseCodeAndNpm(w http.ResponseWriter, r *
 
 	// Kirim response sukses
 	if err := json.NewEncoder(w).Encode(model.WebResponse[[]model.AttendanceResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+}
+
+func (c *AttendanceController) Update(w http.ResponseWriter, r *http.Request) {
+
+	// Set header content-type sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Menutup body setelah selesai dibaca
+	defer r.Body.Close()
+
+	// Parsing request body
+	var request *model.AttendanceUpdateRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		c.Log.Printf("Failed to parse request body: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		c.Log.Printf("Failed to parse id: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	request.ID = uint(idInt)
+	// Panggil UseCase.Logout
+	response, err := c.UseCase.Update(r.Context(), request)
+	if err != nil {
+		c.Log.Printf("Failed to attend user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.AttendanceResponse]{Data: response}); err != nil {
 		c.Log.Printf("Failed to write response: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
