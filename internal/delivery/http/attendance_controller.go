@@ -29,10 +29,22 @@ func (c *AttendanceController) AttendStudent(w http.ResponseWriter, r *http.Requ
 
 	auth := middleware.GetUser(r)
 
-	// Buat request untuk use case
-	request := &model.AttendanceCreateRequest{
-		UserId: auth.ID,
+	// Set header content-type sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Menutup body setelah selesai dibaca
+	defer r.Body.Close()
+
+	// Parsing request body
+	var request *model.AttendanceCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		c.Log.Printf("Failed to parse request body: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
 	}
+
+	// Buat request untuk use case
+	request.UserId = auth.ID
 
 	// Panggil UseCase.Logout
 	response, err := c.UseCase.AttendStudent(r.Context(), request)
@@ -41,9 +53,6 @@ func (c *AttendanceController) AttendStudent(w http.ResponseWriter, r *http.Requ
 		http.Error(w, err.Error(), helper.GetStatusCode(err))
 		return
 	}
-
-	// Set header sebagai JSON
-	w.Header().Set("Content-Type", "application/json")
 
 	// Kirim response sukses
 	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.AttendanceResponse]{Data: response}); err != nil {
@@ -57,10 +66,22 @@ func (c *AttendanceController) AttendLecturer(w http.ResponseWriter, r *http.Req
 
 	auth := middleware.GetUser(r)
 
-	// Buat request untuk use case
-	request := &model.AttendanceCreateRequest{
-		UserId: auth.ID,
+	// Set header content-type sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Menutup body setelah selesai dibaca
+	defer r.Body.Close()
+
+	// Parsing request body
+	var request *model.AttendanceCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		c.Log.Printf("Failed to parse request body: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
 	}
+
+	// Buat request untuk use case
+	request.UserId = auth.ID
 
 	// Panggil UseCase.Logout
 	response, err := c.UseCase.AttendLecturer(r.Context(), request)

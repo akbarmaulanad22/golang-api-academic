@@ -74,7 +74,7 @@ func (c *AttendanceUseCase) AttendStudent(ctx context.Context, request *model.At
 	}
 
 	attendance := &entity.Attendance{
-		Status:     "Hadir",
+		Status:     request.Status,
 		Time:       time.Now(),
 		ScheduleId: scheduleID,
 		UserId:     request.UserId,
@@ -117,7 +117,7 @@ func (c *AttendanceUseCase) AttendLecturer(ctx context.Context, request *model.A
 	attendance := &entity.Attendance{
 		UserId:     request.UserId,
 		ScheduleId: scheduleID,
-		Status:     "Hadir",
+		Status:     request.Status,
 		Time:       time.Now(),
 	}
 
