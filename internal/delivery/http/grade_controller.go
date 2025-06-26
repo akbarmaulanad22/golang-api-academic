@@ -61,7 +61,7 @@ func (c *GradeController) ListByNpmAndCourseCode(w http.ResponseWriter, r *http.
 
 	courseCode := vars["courseCode"]
 
-	request := &model.GetGradeRequest{
+	request := &model.ListInLecturerGradeRequest{
 		Npm:        uint(npmInt),
 		CourseCode: courseCode,
 	}

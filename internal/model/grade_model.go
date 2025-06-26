@@ -15,7 +15,7 @@ type GradeInLecturerResponse struct {
 	Score float64 `json:"score"`
 }
 
-type GetGradeRequest struct {
+type ListInLecturerGradeRequest struct {
 	Npm        uint   `json:"npm"`
 	CourseCode string `json:"course_code"`
 }

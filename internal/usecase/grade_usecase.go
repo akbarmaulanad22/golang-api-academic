@@ -109,7 +109,7 @@ func (c *GradeUseCase) ListByStudentUserID(ctx context.Context, request *model.L
 	return reports, nil
 }
 
-func (c *GradeUseCase) ListByNpmAndCourseCode(ctx context.Context, request *model.GetGradeRequest) ([]model.GradeInLecturerResponse, error) {
+func (c *GradeUseCase) ListByNpmAndCourseCode(ctx context.Context, request *model.ListInLecturerGradeRequest) ([]model.GradeInLecturerResponse, error) {
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
