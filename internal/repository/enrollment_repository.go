@@ -19,7 +19,7 @@ func NewEnrollmentRepository(log *logrus.Logger) *EnrollmentRepository {
 }
 
 // GetActiveEnrollmentID - ambil enrollment berdasarkan user_id
-func (r EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, userID uint) ([]entity.Enrollment, error) {
+func (r *EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, userID uint) ([]entity.Enrollment, error) {
 
 	var enrollments []entity.Enrollment
 
@@ -35,4 +35,8 @@ func (r EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, user
 	}
 
 	return enrollments, nil
+}
+
+func (r *EnrollmentRepository) FindEnrollmentByNpmAndCourseCode(db *gorm.DB, enrollment *entity.Enrollment, npm uint, courseCode string) error {
+	return db.Where("student_npm = ? AND course_code = ? AND YEAR(registration_date) = YEAR(CURDATE())", npm, courseCode).Take(enrollment).Error
 }

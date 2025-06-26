@@ -5,36 +5,13 @@ import (
 	"fmt"
 	"tugasakhir/internal/entity"
 	"tugasakhir/internal/model"
+	"tugasakhir/internal/model/converter"
 	"tugasakhir/internal/repository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
-
-// type GradeUseCase struct {
-// 	DB              *gorm.DB
-// 	Log             *logrus.Logger
-// 	Validate        *validator.Validate
-// 	GradeRepository *repository.GradeRepository
-// }
-
-// func NewGradeUseCase(
-// 	db *gorm.DB,
-// 	log *logrus.Logger,
-// 	validate *validator.Validate,
-// 	enrollmentRepository *repository.GradeRepository,
-
-// ) *GradeUseCase {
-
-// 	return &GradeUseCase{
-// 		DB:              db,
-// 		Log:             log,
-// 		Validate:        validate,
-// 		GradeRepository: enrollmentRepository,
-// 	}
-
-// }
 
 type GradeUseCase struct {
 	DB             *gorm.DB
@@ -44,6 +21,7 @@ type GradeUseCase struct {
 	ScheduleRepo   *repository.ScheduleRepository
 	AttendanceRepo *repository.AttendanceRepository
 	CourseRepo     *repository.CourseRepository
+	EnrollmentRepo *repository.EnrollmentRepository
 }
 
 func NewGradeUseCase(
@@ -54,6 +32,7 @@ func NewGradeUseCase(
 	scheduleRepo *repository.ScheduleRepository,
 	attendanceRepo *repository.AttendanceRepository,
 	courseRepo *repository.CourseRepository,
+	enrollmentRepo *repository.EnrollmentRepository,
 ) *GradeUseCase {
 	return &GradeUseCase{
 		DB:             db,
@@ -63,6 +42,7 @@ func NewGradeUseCase(
 		ScheduleRepo:   scheduleRepo,
 		AttendanceRepo: attendanceRepo,
 		CourseRepo:     courseRepo,
+		EnrollmentRepo: enrollmentRepo,
 	}
 }
 
@@ -101,10 +81,10 @@ func (c *GradeUseCase) ListByStudentUserID(ctx context.Context, request *model.L
 		tx.Where("enrollment_id = ?", e.ID).Preload("GradeComponent").Find(&grades)
 
 		totalScore := 0.0
-		var components []model.GradeComponentScoreResponse
+		var components []model.GradeComponentResponse
 
 		for _, g := range grades {
-			component := model.GradeComponentScoreResponse{
+			component := model.GradeComponentResponse{
 				Name:  g.GradeComponent.Name,
 				Score: g.Score * float64(g.GradeComponent.Weight) / 100,
 			}
@@ -122,9 +102,38 @@ func (c *GradeUseCase) ListByStudentUserID(ctx context.Context, request *model.L
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		c.Log.Warnf("Gagal commit transaksi: %+v", err)
+		c.Log.Warnf("failed commit transaction: %+v", err)
 		return nil, err
 	}
 
 	return reports, nil
+}
+
+func (c *GradeUseCase) ListByNpmAndCourseCode(ctx context.Context, request *model.GetGradeRequest) ([]model.GradeInLecturerResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	enrollment := new(entity.Enrollment)
+	if err := c.EnrollmentRepo.FindEnrollmentByNpmAndCourseCode(tx, enrollment, request.Npm, request.CourseCode); err != nil {
+		c.Log.WithError(err).Error("failed to find enrollment")
+		return nil, err
+	}
+
+	grades, err := c.GradeRepo.FindAllByEnrollmentID(tx, enrollment.ID)
+	if err != nil {
+		c.Log.WithError(err).Error("failed to find grade")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("failed commit transaction: %+v", err)
+		return nil, err
+	}
+
+	responses := make([]model.GradeInLecturerResponse, len(grades))
+	for i, grade := range grades {
+		responses[i] = *converter.GradeInLecturerToResponse(&grade)
+	}
+
+	return responses, nil
 }

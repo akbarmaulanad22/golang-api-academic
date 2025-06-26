@@ -5,12 +5,17 @@ type ListGradeRequest struct {
 }
 
 type GradeResponse struct {
-	CourseName string                        `json:"course_name"`
-	TotalScore float64                       `json:"total_score"`
-	Components []GradeComponentScoreResponse `json:"components"`
+	CourseName string                   `json:"course_name"`
+	TotalScore float64                  `json:"total_score"`
+	Components []GradeComponentResponse `json:"components"`
 }
 
-type GradeComponentScoreResponse struct {
-	Name  string  `json:"name"`
+type GradeInLecturerResponse struct {
+	Type  string  `json:"type"`
 	Score float64 `json:"score"`
+}
+
+type GetGradeRequest struct {
+	Npm        uint   `json:"npm"`
+	CourseCode string `json:"course_code"`
 }

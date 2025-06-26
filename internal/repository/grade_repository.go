@@ -36,3 +36,11 @@ func (r *GradeRepository) SaveAttendanceGrade(db *gorm.DB, enrollmentID uint, sc
 	}
 	return db.Create(&newGrade).Error
 }
+
+func (r *GradeRepository) FindAllByEnrollmentID(tx *gorm.DB, enrollmentID uint) ([]entity.Grade, error) {
+	var grades []entity.Grade
+	if err := tx.Preload("GradeComponent").Where("enrollment_id = ?", enrollmentID).Find(&grades).Error; err != nil {
+		return nil, err
+	}
+	return grades, nil
+}

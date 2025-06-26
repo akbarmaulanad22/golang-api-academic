@@ -144,8 +144,6 @@ func (c *AttendanceUseCase) ListByUserID(ctx context.Context, request *model.Lis
 		return nil, err
 	}
 
-	c.Log.Warnf("teset %s", userID)
-
 	attendances, err := c.AttendanceRepository.FindAllByUserID(tx, userID)
 	if err != nil {
 		c.Log.WithError(err).Error("failed to find attendances")
