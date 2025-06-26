@@ -4,7 +4,6 @@ CREATE TABLE attendances (
     schedule_id INT,
     status VARCHAR(20),
     time DATETIME,
-    keterangan TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),

@@ -14,3 +14,8 @@ type AttendanceCreateResponse struct {
 type ListAttendanceRequest struct {
 	Npm uint `json:"npm"`
 }
+
+type ListInLecturerAttendanceRequest struct {
+	Npm        uint   `json:"npm"`
+	CourseCode string `json:"course_code"`
+}

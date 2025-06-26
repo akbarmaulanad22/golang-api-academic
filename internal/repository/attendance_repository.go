@@ -65,3 +65,20 @@ func (r *AttendanceRepository) FindAllByUserID(db *gorm.DB, UserID uint) ([]enti
 	}
 	return attendances, nil
 }
+
+func (r *AttendanceRepository) FindAllByCourseCodeAndNpm(db *gorm.DB, CourseCode string, npm uint) ([]entity.Attendance, error) {
+	var attendances []entity.Attendance
+	if err := db.
+		Raw(`
+			SELECT status, time, npm FROM attendances
+			JOIN users ON attendances.user_id = users.id
+			JOIN students ON users.id = students.user_id
+			JOIN schedules ON attendances.schedule_id = schedules.id
+			JOIN courses ON schedules.course_code = courses.code
+			WHERE course_code = ? AND npm = ?
+		`, CourseCode, npm).
+		Find(&attendances).Error; err != nil {
+		return nil, err
+	}
+	return attendances, nil
+}

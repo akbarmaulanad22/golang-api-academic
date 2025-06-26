@@ -162,3 +162,26 @@ func (c *AttendanceUseCase) ListByUserID(ctx context.Context, request *model.Lis
 
 	return responses, nil
 }
+
+func (c *AttendanceUseCase) ListByCourseCodeAndNpm(ctx context.Context, request *model.ListInLecturerAttendanceRequest) ([]model.AttendanceResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	attendances, err := c.AttendanceRepository.FindAllByCourseCodeAndNpm(tx, request.CourseCode, request.Npm)
+	if err != nil {
+		c.Log.WithError(err).Error("failed to find attendances")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return nil, err
+	}
+
+	responses := make([]model.AttendanceResponse, len(attendances))
+	for i, attendance := range attendances {
+		responses[i] = *converter.AttendanceToResponse(&attendance)
+	}
+
+	return responses, nil
+}
