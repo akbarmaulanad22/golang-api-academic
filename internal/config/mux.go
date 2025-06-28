@@ -32,6 +32,7 @@ func NewMux(config *MuxConfig) {
 	courseRepository := repository.NewCourseRepository(config.Log)
 	gradeRepository := repository.NewGradeRepository(config.Log)
 	studentRepository := repository.NewStudentRepository(config.Log)
+	studyProgranRepository := repository.NewStudyProgramRepository(config.Log)
 
 	// setup use cases
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
@@ -41,6 +42,7 @@ func NewMux(config *MuxConfig) {
 	gradeUseCase := usecase.NewGradeUseCase(config.DB, config.Log, config.Validate, gradeRepository, scheduleRepository, attendanceRepository, courseRepository, enrollmentRepository)
 	courseUseCase := usecase.NewCourseUseCase(config.DB, config.Log, config.Validate, courseRepository)
 	studentUseCase := usecase.NewStudentUseCase(config.DB, config.Log, config.Validate, studentRepository)
+	studyProgramUseCase := usecase.NewStudyProgramUseCase(config.DB, config.Log, config.Validate, studyProgranRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
@@ -50,20 +52,22 @@ func NewMux(config *MuxConfig) {
 	gradeController := http.NewGradeController(gradeUseCase, config.Log)
 	courseController := http.NewCourseController(courseUseCase, config.Log)
 	studentController := http.NewStudentController(studentUseCase, config.Log)
+	studyProgramController := http.NewStudyProgramController(studyProgramUseCase, config.Log)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
 
 	routeConfig := route.RouteConfig{
-		Router:               config.Router,
-		AuthMiddleware:       authMiddleware,
-		UserController:       userController,
-		AttendanceController: attendanceController,
-		ScheduleController:   scheduleController,
-		EnrollmentController: enrollmentController,
-		GradeController:      gradeController,
-		CourseController:     courseController,
-		StudentController:    studentController,
+		Router:                 config.Router,
+		AuthMiddleware:         authMiddleware,
+		UserController:         userController,
+		AttendanceController:   attendanceController,
+		ScheduleController:     scheduleController,
+		EnrollmentController:   enrollmentController,
+		GradeController:        gradeController,
+		CourseController:       courseController,
+		StudentController:      studentController,
+		StudyProgramController: studyProgramController,
 	}
 	routeConfig.Setup()
 

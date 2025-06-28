@@ -14,13 +14,14 @@ type RouteConfig struct {
 	AuthMiddleware mux.MiddlewareFunc
 
 	// all field controller
-	UserController       *controller.UserController
-	AttendanceController *controller.AttendanceController
-	ScheduleController   *controller.ScheduleController
-	EnrollmentController *controller.EnrollmentController
-	GradeController      *controller.GradeController
-	CourseController     *controller.CourseController
-	StudentController    *controller.StudentController
+	UserController         *controller.UserController
+	AttendanceController   *controller.AttendanceController
+	ScheduleController     *controller.ScheduleController
+	EnrollmentController   *controller.EnrollmentController
+	GradeController        *controller.GradeController
+	CourseController       *controller.CourseController
+	StudentController      *controller.StudentController
+	StudyProgramController *controller.StudyProgramController
 }
 
 func (route *RouteConfig) Setup() {
@@ -60,5 +61,11 @@ func (route *RouteConfig) SetupAuthRoute() {
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Update).Methods("PUT")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades", route.GradeController.ListByNpmAndCourseCode).Methods("GET")
 	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
+
+	admin := authRouter.PathPrefix("/admin").Subrouter()
+	admin.HandleFunc("/study-programs", route.StudyProgramController.Create).Methods("POST")
+	admin.HandleFunc("/study-programs", route.StudyProgramController.List).Methods("GET")
+	admin.HandleFunc("/study-programs/{id}", route.StudyProgramController.Update).Methods("PUT")
+	admin.HandleFunc("/study-programs/{id}", route.StudyProgramController.Delete).Methods("DELETE")
 
 }
