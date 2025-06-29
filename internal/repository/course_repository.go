@@ -28,3 +28,17 @@ func (r *CourseRepository) FindAllByNIDNUserID(db *gorm.DB, userID uint) ([]enti
 	}
 	return courses, nil
 }
+
+func (r *CourseRepository) FindAll(db *gorm.DB) ([]entity.Course, error) {
+
+	var studyProgram []entity.Course
+	if err := db.Find(&studyProgram).Error; err != nil {
+		return nil, err
+	}
+
+	return studyProgram, nil
+}
+
+func (r *CourseRepository) FindByCode(tx *gorm.DB, course *entity.Course, code string) error {
+	return tx.Where("code = ?", code).First(course).Error
+}

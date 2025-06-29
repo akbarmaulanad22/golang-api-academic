@@ -74,4 +74,8 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/faculties/{id}", route.FacultyController.Update).Methods("PUT")
 	admin.HandleFunc("/faculties/{id}", route.FacultyController.Delete).Methods("DELETE")
 
+	admin.HandleFunc("/courses", route.CourseController.Create).Methods("POST")
+	admin.HandleFunc("/courses", route.CourseController.List).Methods("GET")
+	admin.HandleFunc("/courses/{code}", route.CourseController.Update).Methods("PUT")
+	admin.HandleFunc("/courses/{code}", route.CourseController.Delete).Methods("DELETE")
 }
