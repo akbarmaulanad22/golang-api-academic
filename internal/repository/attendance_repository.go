@@ -82,3 +82,28 @@ func (r *AttendanceRepository) FindAllByCourseCodeAndNpm(db *gorm.DB, CourseCode
 	}
 	return attendances, nil
 }
+
+func (r *AttendanceRepository) FindAllByStudentUserID(db *gorm.DB, userID uint) ([]map[string]any, error) {
+	var result []map[string]any
+
+	err := db.Raw(`
+        SELECT 
+            c.name AS course_name,
+           	COALESCE(a.time, s.date) AS attendance_time,
+            COALESCE(a.status, 'Tidak Hadir') AS attendance_status
+        FROM enrollments e
+        JOIN courses c ON c.code = e.course_code
+        JOIN schedules s ON s.course_code = c.code
+        LEFT JOIN attendances a 
+            ON a.schedule_id = s.id 
+            AND a.user_id = (
+                SELECT st.user_id FROM students st WHERE st.npm = e.student_npm
+            )
+        WHERE e.student_npm = (
+            SELECT npm FROM students WHERE user_id = ?
+        )
+        ORDER BY c.name, s.date;
+    `, userID).Scan(&result).Error
+
+	return result, err
+}

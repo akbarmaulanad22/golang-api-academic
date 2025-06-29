@@ -25,3 +25,12 @@ type AttendanceUpdateRequest struct {
 	ID     uint   `json:"-" validate:"required"`
 	Status string `json:"status"`
 }
+
+type ListAttendanceStudentRequest struct {
+	UserID uint `json:"-"`
+}
+
+type AttendanceGroupedResponse struct {
+	Course      string               `json:"course"`
+	Attendances []AttendanceResponse `json:"attendances"`
+}

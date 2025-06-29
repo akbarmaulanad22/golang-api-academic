@@ -50,7 +50,8 @@ func (route *RouteConfig) SetupAuthRoute() {
 
 	student := authRouter.PathPrefix("/student").Subrouter()
 
-	student.HandleFunc("/attendance", route.AttendanceController.AttendStudent).Methods("POST")
+	student.HandleFunc("/attendances", route.AttendanceController.AttendStudent).Methods("POST")
+	student.HandleFunc("/attendances", route.AttendanceController.ListByStudentUserID).Methods("GET")
 	student.HandleFunc("/schedules", route.ScheduleController.ListByStudentUserID).Methods("GET")
 	student.HandleFunc("/enrollments", route.EnrollmentController.ListByStudentUserID).Methods("GET")
 	student.HandleFunc("/grades", route.GradeController.ListByStudentUserID).Methods("GET")

@@ -215,3 +215,27 @@ func (c *AttendanceUseCase) Update(ctx context.Context, request *model.Attendanc
 
 	return converter.AttendanceToResponse(attendance), nil
 }
+
+func (c *AttendanceUseCase) ListByStudentUserID(ctx context.Context, request *model.ListAttendanceStudentRequest) ([]model.AttendanceGroupedResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	attendances, err := c.AttendanceRepository.FindAllByStudentUserID(tx, request.UserID)
+	if err != nil {
+		c.Log.WithError(err).Error("failed to find attendances")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return nil, err
+	}
+
+	responses := make([]model.AttendanceGroupedResponse, len(attendances))
+	for i, attendance := range attendances {
+		responses[i] = converter.AttendanceGroupedToResponse(attendance)
+	}
+
+	// return responses, nil
+	return responses, nil
+}
