@@ -15,13 +15,3 @@ func LecturerToResponse(lecturer *entity.Lecturer) *model.LecturerResponse {
 		IsFullTime: lecturer.IsFullTime,
 	}
 }
-
-// func LecturerToResponse(lecturer *entity.Lecturer) *model.LecturerResponse {
-// 	return &model.LecturerResponse{
-// 		NIDN:       lecturer.Nidn,
-// 		Name:       lecturer.Name,
-// 		Gender:     lecturer.Gender,
-// 		Degree:     lecturer.Degree,
-// 		IsFullTime: lecturer.IsFullTime,
-// 	}
-// }

@@ -40,3 +40,17 @@ func (r *StudentRepository) GetStudentUserIDByNPM(db *gorm.DB, npm uint) (uint, 
     `, npm).Scan(&userID).Error
 	return userID, err
 }
+
+func (r *StudentRepository) FindAll(db *gorm.DB) ([]entity.Student, error) {
+
+	var lecturers []entity.Student
+	if err := db.Preload("User").Find(&lecturers).Error; err != nil {
+		return nil, err
+	}
+
+	return lecturers, nil
+}
+
+func (r *StudentRepository) FindByNpm(db *gorm.DB, user *entity.Student, npm uint) error {
+	return db.Preload("User").Where("npm = ?", npm).First(user).Error
+}

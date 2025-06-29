@@ -10,4 +10,5 @@ type User struct {
 	// relationship
 	Role     *Role     `gorm:"foreignKey:role_id;references:id"`
 	Lecturer *Lecturer `gorm:"foreignkey:UserID;references:ID"`
+	Student  Student   `gorm:"foreignkey:user_id;references:id"`
 }

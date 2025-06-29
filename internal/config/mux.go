@@ -43,7 +43,7 @@ func NewMux(config *MuxConfig) {
 	enrollmentUseCase := usecase.NewEnrollmentUseCase(config.DB, config.Log, config.Validate, enrollmentRepository)
 	gradeUseCase := usecase.NewGradeUseCase(config.DB, config.Log, config.Validate, gradeRepository, scheduleRepository, attendanceRepository, courseRepository, enrollmentRepository)
 	courseUseCase := usecase.NewCourseUseCase(config.DB, config.Log, config.Validate, courseRepository)
-	studentUseCase := usecase.NewStudentUseCase(config.DB, config.Log, config.Validate, studentRepository)
+	studentUseCase := usecase.NewStudentUseCase(config.DB, config.Log, config.Validate, studentRepository, userRepository)
 	studyProgramUseCase := usecase.NewStudyProgramUseCase(config.DB, config.Log, config.Validate, studyProgramRepository)
 	facultyUseCase := usecase.NewFacultyUseCase(config.DB, config.Log, config.Validate, facultyRepository)
 	lecturerUseCase := usecase.NewLecturerUseCase(config.DB, config.Log, config.Validate, lecturerRepository, userRepository)
