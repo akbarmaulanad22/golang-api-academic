@@ -125,3 +125,13 @@ func (r ScheduleRepository) FindAllSchedulesByLecturerUserID(db *gorm.DB, userID
 
 	return schedules, err
 }
+
+func (r *ScheduleRepository) FindAll(db *gorm.DB) ([]entity.Schedule, error) {
+
+	var studyProgram []entity.Schedule
+	if err := db.Find(&studyProgram).Error; err != nil {
+		return nil, err
+	}
+
+	return studyProgram, nil
+}

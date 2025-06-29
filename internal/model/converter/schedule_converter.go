@@ -5,8 +5,8 @@ import (
 	"tugasakhir/internal/model"
 )
 
-func ScheduleToResponse(schedule entity.Schedule) model.ScheduleResponse {
-	return model.ScheduleResponse{
+func ScheduleToResponse(schedule *entity.Schedule) *model.ScheduleResponse {
+	return &model.ScheduleResponse{
 		Course:    schedule.Course.Name,
 		Lecturer:  schedule.Lecturer.Name,
 		Classroom: schedule.Classroom.Name,
@@ -16,13 +16,14 @@ func ScheduleToResponse(schedule entity.Schedule) model.ScheduleResponse {
 	}
 }
 
-func ScheduleToResponses(schedules []entity.Schedule) []model.ScheduleResponse {
-	scheduleResponses := []model.ScheduleResponse{}
-
-	for _, schedule := range schedules {
-		scheduleResponses = append(scheduleResponses, ScheduleToResponse(schedule))
+func ScheduleToAdminResponse(schedule *entity.Schedule) *model.ScheduleAdminResponse {
+	return &model.ScheduleAdminResponse{
+		StartAt:      schedule.StartAt,
+		EndAt:        schedule.EndAt,
+		Date:         schedule.Date,
+		ID:           schedule.ID,
+		CourseCode:   schedule.CourseCode,
+		LecturerNIDN: schedule.LecturerNIDN,
+		ClassroomID:  schedule.ClassroomID,
 	}
-
-	return scheduleResponses
-
 }

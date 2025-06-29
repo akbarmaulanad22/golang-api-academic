@@ -84,4 +84,9 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/enrollments/{id}", route.EnrollmentController.Update).Methods("PUT")
 	admin.HandleFunc("/enrollments/{id}", route.EnrollmentController.Delete).Methods("DELETE")
 
+	admin.HandleFunc("/schedules", route.ScheduleController.Create).Methods("POST")
+	admin.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
+	admin.HandleFunc("/schedules/{id}", route.ScheduleController.Update).Methods("PUT")
+	admin.HandleFunc("/schedules/{id}", route.ScheduleController.Delete).Methods("DELETE")
+
 }
