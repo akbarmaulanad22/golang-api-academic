@@ -40,3 +40,13 @@ func (r *EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, use
 func (r *EnrollmentRepository) FindEnrollmentByNpmAndCourseCode(db *gorm.DB, enrollment *entity.Enrollment, npm uint, courseCode string) error {
 	return db.Where("student_npm = ? AND course_code = ? AND YEAR(registration_date) = YEAR(CURDATE())", npm, courseCode).Take(enrollment).Error
 }
+
+func (r *EnrollmentRepository) FindAll(db *gorm.DB) ([]entity.Enrollment, error) {
+
+	var studyProgram []entity.Enrollment
+	if err := db.Find(&studyProgram).Error; err != nil {
+		return nil, err
+	}
+
+	return studyProgram, nil
+}

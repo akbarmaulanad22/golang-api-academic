@@ -9,7 +9,7 @@ type Enrollment struct {
 	RegistrationDate time.Time `gorm:"column:registration_date"`
 
 	// foreign key
-	StudentNpm string `gorm:"column:student_npm"`
+	StudentNpm uint   `gorm:"column:student_npm"`
 	CourseCode string `gorm:"column:course_code"`
 
 	// relationship

@@ -5,8 +5,8 @@ import (
 	"tugasakhir/internal/model"
 )
 
-func EnrollmentToResponse(enrollment entity.Enrollment) model.EnrollmentResponse {
-	return model.EnrollmentResponse{
+func EnrollmentToResponse(enrollment *entity.Enrollment) *model.EnrollmentResponse {
+	return &model.EnrollmentResponse{
 		Status:       enrollment.Status,
 		AcademicYear: enrollment.AcademicYear,
 		Name:         enrollment.Course.Name,
@@ -15,13 +15,13 @@ func EnrollmentToResponse(enrollment entity.Enrollment) model.EnrollmentResponse
 	}
 }
 
-func EnrollmentToResponses(enrollments []entity.Enrollment) []model.EnrollmentResponse {
-	enrollmentResponses := []model.EnrollmentResponse{}
-
-	for _, enrollment := range enrollments {
-		enrollmentResponses = append(enrollmentResponses, EnrollmentToResponse(enrollment))
+func EnrollmentToAdminResponse(enrollment *entity.Enrollment) *model.EnrollmentAdminResponse {
+	return &model.EnrollmentAdminResponse{
+		ID:               enrollment.ID,
+		Status:           enrollment.Status,
+		AcademicYear:     enrollment.AcademicYear,
+		RegistrationDate: enrollment.RegistrationDate,
+		StudentNpm:       enrollment.StudentNpm,
+		CourseCode:       enrollment.CourseCode,
 	}
-
-	return enrollmentResponses
-
 }
