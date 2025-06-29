@@ -32,7 +32,8 @@ func NewMux(config *MuxConfig) {
 	courseRepository := repository.NewCourseRepository(config.Log)
 	gradeRepository := repository.NewGradeRepository(config.Log)
 	studentRepository := repository.NewStudentRepository(config.Log)
-	studyProgranRepository := repository.NewStudyProgramRepository(config.Log)
+	studyProgramRepository := repository.NewStudyProgramRepository(config.Log)
+	facultyRepository := repository.NewFacultyRepository(config.Log)
 
 	// setup use cases
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
@@ -42,7 +43,8 @@ func NewMux(config *MuxConfig) {
 	gradeUseCase := usecase.NewGradeUseCase(config.DB, config.Log, config.Validate, gradeRepository, scheduleRepository, attendanceRepository, courseRepository, enrollmentRepository)
 	courseUseCase := usecase.NewCourseUseCase(config.DB, config.Log, config.Validate, courseRepository)
 	studentUseCase := usecase.NewStudentUseCase(config.DB, config.Log, config.Validate, studentRepository)
-	studyProgramUseCase := usecase.NewStudyProgramUseCase(config.DB, config.Log, config.Validate, studyProgranRepository)
+	studyProgramUseCase := usecase.NewStudyProgramUseCase(config.DB, config.Log, config.Validate, studyProgramRepository)
+	facultyUseCase := usecase.NewFacultyUseCase(config.DB, config.Log, config.Validate, facultyRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
@@ -53,6 +55,7 @@ func NewMux(config *MuxConfig) {
 	courseController := http.NewCourseController(courseUseCase, config.Log)
 	studentController := http.NewStudentController(studentUseCase, config.Log)
 	studyProgramController := http.NewStudyProgramController(studyProgramUseCase, config.Log)
+	facultyController := http.NewFacultyController(facultyUseCase, config.Log)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
@@ -68,6 +71,7 @@ func NewMux(config *MuxConfig) {
 		CourseController:       courseController,
 		StudentController:      studentController,
 		StudyProgramController: studyProgramController,
+		FacultyController:      facultyController,
 	}
 	routeConfig.Setup()
 
