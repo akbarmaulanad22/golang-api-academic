@@ -23,6 +23,7 @@ type RouteConfig struct {
 	StudentController      *controller.StudentController
 	StudyProgramController *controller.StudyProgramController
 	FacultyController      *controller.FacultyController
+	LecturerController     *controller.LecturerController
 }
 
 func (route *RouteConfig) Setup() {
@@ -88,5 +89,10 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/schedules", route.ScheduleController.List).Methods("GET")
 	admin.HandleFunc("/schedules/{id}", route.ScheduleController.Update).Methods("PUT")
 	admin.HandleFunc("/schedules/{id}", route.ScheduleController.Delete).Methods("DELETE")
+
+	admin.HandleFunc("/lecturers", route.LecturerController.Create).Methods("POST")
+	admin.HandleFunc("/lecturers", route.LecturerController.List).Methods("GET")
+	admin.HandleFunc("/lecturers/{nidn}", route.LecturerController.Update).Methods("PUT")
+	admin.HandleFunc("/lecturers/{nidn}", route.LecturerController.Delete).Methods("DELETE")
 
 }

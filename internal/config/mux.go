@@ -34,6 +34,7 @@ func NewMux(config *MuxConfig) {
 	studentRepository := repository.NewStudentRepository(config.Log)
 	studyProgramRepository := repository.NewStudyProgramRepository(config.Log)
 	facultyRepository := repository.NewFacultyRepository(config.Log)
+	lecturerRepository := repository.NewLecturerRepository(config.Log)
 
 	// setup use cases
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository)
@@ -45,6 +46,7 @@ func NewMux(config *MuxConfig) {
 	studentUseCase := usecase.NewStudentUseCase(config.DB, config.Log, config.Validate, studentRepository)
 	studyProgramUseCase := usecase.NewStudyProgramUseCase(config.DB, config.Log, config.Validate, studyProgramRepository)
 	facultyUseCase := usecase.NewFacultyUseCase(config.DB, config.Log, config.Validate, facultyRepository)
+	lecturerUseCase := usecase.NewLecturerUseCase(config.DB, config.Log, config.Validate, lecturerRepository, userRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
@@ -56,6 +58,7 @@ func NewMux(config *MuxConfig) {
 	studentController := http.NewStudentController(studentUseCase, config.Log)
 	studyProgramController := http.NewStudyProgramController(studyProgramUseCase, config.Log)
 	facultyController := http.NewFacultyController(facultyUseCase, config.Log)
+	lecturerController := http.NewLecturerController(lecturerUseCase, config.Log)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
@@ -72,6 +75,7 @@ func NewMux(config *MuxConfig) {
 		StudentController:      studentController,
 		StudyProgramController: studyProgramController,
 		FacultyController:      facultyController,
+		LecturerController:     lecturerController,
 	}
 	routeConfig.Setup()
 

@@ -8,5 +8,6 @@ type User struct {
 	RoleID   uint   `gorm:"column:role_id"`
 
 	// relationship
-	Role *Role `gorm:"foreignKey:role_id;references:id"`
+	Role     *Role     `gorm:"foreignKey:role_id;references:id"`
+	Lecturer *Lecturer `gorm:"foreignkey:UserID;references:ID"`
 }

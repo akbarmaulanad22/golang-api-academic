@@ -34,3 +34,13 @@ func (r *UserRepository) FindByUsername(db *gorm.DB, user *entity.User, id any) 
 func (r *UserRepository) FindByToken(db *gorm.DB, user *entity.User, token string) error {
 	return db.Where("token = ?", token).First(user).Error
 }
+
+func (r *UserRepository) FindAllJoinLecturer(db *gorm.DB) ([]entity.User, error) {
+
+	var users []entity.User
+	if err := db.Preload("Lecturer").Joins("JOIN lecturers ON lecturers.user_id = users.id").Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
