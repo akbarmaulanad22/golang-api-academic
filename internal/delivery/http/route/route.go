@@ -24,6 +24,7 @@ type RouteConfig struct {
 	StudyProgramController *controller.StudyProgramController
 	FacultyController      *controller.FacultyController
 	LecturerController     *controller.LecturerController
+	ClassroomController    *controller.ClassroomController
 }
 
 func (route *RouteConfig) Setup() {
@@ -100,5 +101,10 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/students", route.StudentController.List).Methods("GET")
 	admin.HandleFunc("/students/{npm}", route.StudentController.Update).Methods("PUT")
 	admin.HandleFunc("/students/{npm}", route.StudentController.Delete).Methods("DELETE")
+
+	admin.HandleFunc("/classrooms", route.ClassroomController.Create).Methods("POST")
+	admin.HandleFunc("/classrooms", route.ClassroomController.List).Methods("GET")
+	admin.HandleFunc("/classrooms/{id}", route.ClassroomController.Update).Methods("PUT")
+	admin.HandleFunc("/classrooms/{id}", route.ClassroomController.Delete).Methods("DELETE")
 
 }
