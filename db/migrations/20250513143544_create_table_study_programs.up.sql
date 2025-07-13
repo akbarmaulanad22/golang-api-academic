@@ -7,5 +7,5 @@ CREATE TABLE study_programs (
     faculty_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (faculty_id) REFERENCES faculties(id)
+    FOREIGN KEY (faculty_id) REFERENCES faculties(id) ON DELETE CASCADE
 );

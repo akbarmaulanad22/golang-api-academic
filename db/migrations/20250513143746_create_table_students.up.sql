@@ -11,6 +11,6 @@ CREATE TABLE students (
     study_program_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (study_program_id) REFERENCES study_programs(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (study_program_id) REFERENCES study_programs(id) ON DELETE CASCADE
 );

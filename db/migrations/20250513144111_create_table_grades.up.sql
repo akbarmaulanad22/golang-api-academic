@@ -5,6 +5,6 @@ CREATE TABLE grades (
     grade_component_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (enrollment_id) REFERENCES enrollments(id),
-    FOREIGN KEY (grade_component_id) REFERENCES grade_components(id)
+    FOREIGN KEY (enrollment_id) REFERENCES enrollments(id) ON DELETE CASCADE,
+    FOREIGN KEY (grade_component_id) REFERENCES grade_components(id) ON DELETE CASCADE
 );

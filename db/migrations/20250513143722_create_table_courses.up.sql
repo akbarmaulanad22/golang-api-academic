@@ -7,5 +7,5 @@ CREATE TABLE courses (
     lecturer_nidn INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (lecturer_nidn) REFERENCES lecturers(nidn)
+    FOREIGN KEY (lecturer_nidn) REFERENCES lecturers(nidn) ON DELETE CASCADE
 );

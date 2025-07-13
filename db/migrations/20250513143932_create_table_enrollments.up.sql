@@ -7,6 +7,6 @@ CREATE TABLE enrollments (
     course_code VARCHAR(20),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_npm) REFERENCES students(npm),
-    FOREIGN KEY (course_code) REFERENCES courses(code)
+    FOREIGN KEY (student_npm) REFERENCES students(npm) ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES courses(code) ON DELETE CASCADE
 );

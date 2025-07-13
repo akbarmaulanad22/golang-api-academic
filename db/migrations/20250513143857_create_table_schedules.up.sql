@@ -8,7 +8,7 @@ CREATE TABLE schedules (
     classroom_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_code) REFERENCES courses(code),
-    FOREIGN KEY (lecturer_nidn) REFERENCES lecturers(nidn),
-    FOREIGN KEY (classroom_id) REFERENCES classrooms(id)
+    FOREIGN KEY (course_code) REFERENCES courses(code) ON DELETE CASCADE,
+    FOREIGN KEY (lecturer_nidn) REFERENCES lecturers(nidn) ON DELETE CASCADE,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE CASCADE
 );

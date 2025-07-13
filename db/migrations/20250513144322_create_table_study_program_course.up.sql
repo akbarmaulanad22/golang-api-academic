@@ -6,6 +6,6 @@ CREATE TABLE study_program_course (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (study_program_id, course_code),
-    FOREIGN KEY (study_program_id) REFERENCES study_programs(id),
-    FOREIGN KEY (course_code) REFERENCES courses(code)
+    FOREIGN KEY (study_program_id) REFERENCES study_programs(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES courses(code) ON DELETE CASCADE
 );
