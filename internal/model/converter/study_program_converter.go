@@ -5,12 +5,13 @@ import (
 	"tugasakhir/internal/model"
 )
 
-func StudyProgramToResponse(attendance *entity.StudyProgram) *model.StudyProgramResponse {
+func StudyProgramToResponse(studyProgram *entity.StudyProgram) *model.StudyProgramResponse {
 	return &model.StudyProgramResponse{
-		ID:               attendance.ID,
-		Name:             attendance.Name,
-		Level:            attendance.Level,
-		Accreditation:    attendance.Accreditation,
-		DurationSemester: attendance.DurationSemester,
+		ID:               studyProgram.ID,
+		Name:             studyProgram.Name,
+		Level:            studyProgram.Level,
+		Accreditation:    studyProgram.Accreditation,
+		DurationSemester: studyProgram.DurationSemester,
+		FacultyID:        studyProgram.FacultyId,
 	}
 }

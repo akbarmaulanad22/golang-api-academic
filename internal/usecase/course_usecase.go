@@ -70,12 +70,12 @@ func (c *CourseUseCase) Create(ctx context.Context, request *model.CreateCourseR
 	}
 
 	course := &entity.Course{
-		Code:          request.Code,
-		Name:          request.Name,
-		Sks:           request.Sks,
-		Semester:      request.Semester,
-		TotalMeetings: request.TotalMeetings,
-		LecturerNIDN:  uint(request.LecturerNIDN),
+		Code:     request.Code,
+		Name:     request.Name,
+		Sks:      request.Sks,
+		Semester: request.Semester,
+		// TotalMeetings: request.TotalMeetings,
+		LecturerNIDN: uint(request.LecturerNIDN),
 	}
 
 	if err := c.CourseRepository.Create(tx, course); err != nil {
@@ -134,7 +134,7 @@ func (c *CourseUseCase) Update(ctx context.Context, request *model.UpdateCourseR
 	course.Name = request.Name
 	course.Sks = request.Sks
 	course.Semester = request.Semester
-	course.TotalMeetings = request.TotalMeetings
+	// course.TotalMeetings = request.TotalMeetings
 	course.LecturerNIDN = request.LecturerNIDN
 
 	if err := c.CourseRepository.Update(tx, course); err != nil {

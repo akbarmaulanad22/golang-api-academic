@@ -21,7 +21,7 @@ func NewStudyProgramRepository(log *logrus.Logger) *StudyProgramRepository {
 func (r *StudyProgramRepository) FindAll(db *gorm.DB) ([]entity.StudyProgram, error) {
 
 	var studyProgram []entity.StudyProgram
-	if err := db.Find(&studyProgram).Error; err != nil {
+	if err := db.Preload("Faculty").Find(&studyProgram).Error; err != nil {
 		return nil, err
 	}
 

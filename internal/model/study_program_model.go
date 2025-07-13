@@ -6,6 +6,7 @@ type StudyProgramResponse struct {
 	Level            string `json:"level"`
 	Accreditation    string `json:"accreditation"`
 	DurationSemester int    `json:"duration_semester"`
+	FacultyID        uint   `json:"faculty_id"`
 }
 
 type CreateStudyProgramRequest struct {

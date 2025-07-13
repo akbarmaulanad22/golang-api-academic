@@ -87,6 +87,7 @@ func (c *GradeUseCase) ListByStudentUserID(ctx context.Context, request *model.L
 			component := model.GradeComponentResponse{
 				Name:  g.GradeComponent.Name,
 				Score: g.Score * float64(g.GradeComponent.Weight) / 100,
+				Grade: g.Score,
 			}
 			components = append(components, component)
 			totalScore += component.Score
