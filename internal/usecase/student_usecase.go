@@ -167,15 +167,17 @@ func (c *StudentUseCase) Update(ctx context.Context, request *model.UpdateStuden
 		return nil, err
 	}
 
-	// encrypt password
-	password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
-	if err != nil {
-		c.Log.Warnf("Failed to generate bcrype hash : %+v", err)
-		return nil, err
+	if request.Password != "" {
+		// encrypt password
+		password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.Log.Warnf("Failed to generate bcrype hash : %+v", err)
+			return nil, err
+		}
+
+		student.User.Password = string(password)
 	}
 
-	student.User.Password = string(password)
-	student.Npm = request.Npm
 	student.Class = request.Class
 	student.RegistrationWave = request.RegistrationWave
 	student.RegistrationDate = request.RegistrationDate

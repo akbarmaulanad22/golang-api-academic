@@ -46,7 +46,7 @@ type CreateStudentRequest struct {
 }
 
 type UpdateStudentRequest struct {
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password"`
 
 	Npm              uint      `json:"npm" validate:"required"`
 	Class            string    `json:"class" validate:"required"`

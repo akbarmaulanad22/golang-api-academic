@@ -14,17 +14,18 @@ type RouteConfig struct {
 	AuthMiddleware mux.MiddlewareFunc
 
 	// all field controller
-	UserController         *controller.UserController
-	AttendanceController   *controller.AttendanceController
-	ScheduleController     *controller.ScheduleController
-	EnrollmentController   *controller.EnrollmentController
-	GradeController        *controller.GradeController
-	CourseController       *controller.CourseController
-	StudentController      *controller.StudentController
-	StudyProgramController *controller.StudyProgramController
-	FacultyController      *controller.FacultyController
-	LecturerController     *controller.LecturerController
-	ClassroomController    *controller.ClassroomController
+	UserController           *controller.UserController
+	AttendanceController     *controller.AttendanceController
+	ScheduleController       *controller.ScheduleController
+	EnrollmentController     *controller.EnrollmentController
+	GradeController          *controller.GradeController
+	CourseController         *controller.CourseController
+	StudentController        *controller.StudentController
+	StudyProgramController   *controller.StudyProgramController
+	FacultyController        *controller.FacultyController
+	LecturerController       *controller.LecturerController
+	ClassroomController      *controller.ClassroomController
+	GradeComponentController *controller.GradeComponentController
 }
 
 func (route *RouteConfig) Setup() {
@@ -106,5 +107,10 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/classrooms", route.ClassroomController.List).Methods("GET")
 	admin.HandleFunc("/classrooms/{id}", route.ClassroomController.Update).Methods("PUT")
 	admin.HandleFunc("/classrooms/{id}", route.ClassroomController.Delete).Methods("DELETE")
+
+	admin.HandleFunc("/grade-components", route.GradeComponentController.Create).Methods("POST")
+	admin.HandleFunc("/grade-components", route.GradeComponentController.List).Methods("GET")
+	admin.HandleFunc("/grade-components/{id}", route.GradeComponentController.Update).Methods("PUT")
+	admin.HandleFunc("/grade-components/{id}", route.GradeComponentController.Delete).Methods("DELETE")
 
 }
