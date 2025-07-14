@@ -73,18 +73,14 @@ func (c *AttendanceController) AttendLecturer(w http.ResponseWriter, r *http.Req
 	defer r.Body.Close()
 
 	// Parsing request body
-	var request *model.AttendanceCreateRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		c.Log.Printf("Failed to parse request body: %v", err)
-		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
-	}
+	var request model.AttendanceCreateRequest
 
 	// Buat request untuk use case
 	request.UserId = auth.ID
+	request.Status = "Hadir"
 
 	// Panggil UseCase.Logout
-	response, err := c.UseCase.AttendLecturer(r.Context(), request)
+	response, err := c.UseCase.AttendLecturer(r.Context(), &request)
 	if err != nil {
 		c.Log.Printf("Failed to attend user: %v", err)
 		http.Error(w, err.Error(), helper.GetStatusCode(err))

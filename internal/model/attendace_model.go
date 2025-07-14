@@ -8,8 +8,8 @@ type AttendanceResponse struct {
 }
 
 type AttendanceCreateRequest struct {
-	UserId uint   `json:"user_id" validate:"required"`
-	Status string `json:"status"`
+	UserId uint   `json:"-" validate:"required"`
+	Status string `json:"status" validate:"required"`
 }
 
 type ListAttendanceRequest struct {
