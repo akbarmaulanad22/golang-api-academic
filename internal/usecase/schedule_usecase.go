@@ -13,10 +13,11 @@ import (
 )
 
 type ScheduleUseCase struct {
-	DB                 *gorm.DB
-	Log                *logrus.Logger
-	Validate           *validator.Validate
-	ScheduleRepository *repository.ScheduleRepository
+	DB                   *gorm.DB
+	Log                  *logrus.Logger
+	Validate             *validator.Validate
+	ScheduleRepository   *repository.ScheduleRepository
+	AttendanceRepository *repository.AttendanceRepository
 }
 
 func NewScheduleUseCase(
@@ -24,14 +25,16 @@ func NewScheduleUseCase(
 	log *logrus.Logger,
 	validate *validator.Validate,
 	scheduleRepository *repository.ScheduleRepository,
+	attendanceRepository *repository.AttendanceRepository,
 
 ) *ScheduleUseCase {
 
 	return &ScheduleUseCase{
-		DB:                 db,
-		Log:                log,
-		Validate:           validate,
-		ScheduleRepository: scheduleRepository,
+		DB:                   db,
+		Log:                  log,
+		Validate:             validate,
+		ScheduleRepository:   scheduleRepository,
+		AttendanceRepository: attendanceRepository,
 	}
 
 }
@@ -205,4 +208,30 @@ func (c *ScheduleUseCase) Delete(ctx context.Context, request *model.DeleteSched
 	}
 
 	return nil
+}
+
+func (c *ScheduleUseCase) GetScheduleByStudentUserID(ctx context.Context, request *model.ListScheduleRequest) (*model.ScheduleStudentResponse, error) {
+	// start transaction
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	schedule, err := c.ScheduleRepository.GetStudentActiveScheduleByUserID(tx, request.UserID)
+	var lecturerStatus string = "Belum hadir"
+
+	if err != nil {
+		return nil, err
+	}
+
+	if c.AttendanceRepository.IsLecturerPresent(tx, schedule.ID) {
+		lecturerStatus = "Hadir"
+	}
+
+	// commit db transaction
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed commit transaction : %+v", err)
+		return nil, err
+	}
+
+	return converter.ScheduleToStudentResponse(schedule, lecturerStatus), nil
+
 }

@@ -15,6 +15,13 @@ type ScheduleResponse struct {
 	Date      time.Time `json:"date"`
 }
 
+type ScheduleStudentResponse struct {
+	Course         string `json:"course"`
+	Lecturer       string `json:"lecturer"`
+	Classroom      string `json:"classroom"`
+	LecturerStatus string `json:"lecturer_status"`
+}
+
 type ScheduleAdminResponse struct {
 	ID           uint      `json:"id"`
 	Date         time.Time `json:"date"`

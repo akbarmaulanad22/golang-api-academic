@@ -16,6 +16,15 @@ func ScheduleToResponse(schedule *entity.Schedule) *model.ScheduleResponse {
 	}
 }
 
+func ScheduleToStudentResponse(schedule *entity.Schedule, status string) *model.ScheduleStudentResponse {
+	return &model.ScheduleStudentResponse{
+		Course:         schedule.Course.Name,
+		Lecturer:       schedule.Lecturer.Name,
+		Classroom:      schedule.Classroom.Name,
+		LecturerStatus: status,
+	}
+}
+
 func ScheduleToAdminResponse(schedule *entity.Schedule) *model.ScheduleAdminResponse {
 	return &model.ScheduleAdminResponse{
 		StartAt:      schedule.StartAt,

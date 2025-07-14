@@ -48,6 +48,27 @@ func (r *ScheduleRepository) GetStudentActiveScheduleIDByUserID(db *gorm.DB, use
 	return scheduleID, nil
 }
 
+func (r *ScheduleRepository) GetStudentActiveScheduleByUserID(db *gorm.DB, userID uint) (*entity.Schedule, error) {
+
+	schedule := new(entity.Schedule)
+	err := db.
+		Preload("Course").
+		Preload("Lecturer").
+		Preload("Classroom").
+		Joins("JOIN enrollments e ON e.course_code = schedules.course_code").
+		Joins("JOIN students st ON st.npm = e.student_npm").
+		Where("st.user_id = ? AND schedules.date = CURDATE() AND NOW() BETWEEN DATE_SUB(CONCAT(schedules.date, ' ', schedules.start_at), INTERVAL 30 MINUTE) AND CONCAT(schedules.date, ' ', schedules.end_at)", userID).
+		Order("schedules.start_at").
+		First(schedule).
+		Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return schedule, nil
+}
+
 // GetActiveScheduleID - ambil schedule_id berdasarkan user_id
 func (r *ScheduleRepository) FindAllScheduleByStudentUserID(db *gorm.DB, userID uint) ([]entity.Schedule, error) {
 

@@ -25,10 +25,12 @@ func (r *AttendanceRepository) IsLecturerPresent(db *gorm.DB, scheduleID uint) b
         SELECT COUNT(*) 
         FROM schedules s
         JOIN lecturers l ON s.lecturer_nidn = l.nidn
-        LEFT JOIN attendance a ON a.schedule_id = s.id AND DATE(a.time) = CURDATE() AND a.user_id = l.user_id
+        LEFT JOIN attendances a ON a.schedule_id = s.id AND DATE(a.time) = CURDATE() AND a.user_id = l.user_id
         WHERE s.id = ?
         AND a.status IS NOT NULL
     `, scheduleID).Count(&count)
+
+	r.Log.Infof("================== count: %d================", count)
 
 	return count > 0
 }
