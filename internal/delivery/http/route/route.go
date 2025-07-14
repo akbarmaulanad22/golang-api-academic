@@ -67,6 +67,7 @@ func (route *RouteConfig) SetupAuthRoute() {
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Update).Methods("PUT")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades", route.GradeController.ListByNpmAndCourseCode).Methods("GET")
 	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
+	lecturer.HandleFunc("/schedules/coming", route.ScheduleController.IsScheduleUpcomingByLecturerUserID).Methods("GET")
 
 	admin := authRouter.PathPrefix("/admin").Subrouter()
 	admin.HandleFunc("/study-programs", route.StudyProgramController.Create).Methods("POST")

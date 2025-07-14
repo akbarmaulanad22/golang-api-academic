@@ -223,3 +223,29 @@ func (c *ScheduleController) GetByStudentUserID(w http.ResponseWriter, r *http.R
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
+
+func (c *ScheduleController) IsScheduleUpcomingByLecturerUserID(w http.ResponseWriter, r *http.Request) {
+
+	auth := middleware.GetUser(r)
+
+	request := model.ListScheduleRequest{
+		UserID: auth.ID,
+	}
+
+	// Panggil UseCase
+	response, err := c.UseCase.IsScheduleUpcomingByLecturerUserID(r.Context(), &request)
+	if err != nil {
+		c.Log.Printf("Failed to get schedule: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Set header sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[bool]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}

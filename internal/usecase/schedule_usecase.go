@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"tugasakhir/internal/entity"
 	"tugasakhir/internal/model"
 	"tugasakhir/internal/model/converter"
@@ -233,5 +234,30 @@ func (c *ScheduleUseCase) GetScheduleByStudentUserID(ctx context.Context, reques
 	}
 
 	return converter.ScheduleToStudentResponse(schedule, lecturerStatus), nil
+
+}
+
+func (c *ScheduleUseCase) IsScheduleUpcomingByLecturerUserID(ctx context.Context, request *model.ListScheduleRequest) (bool, error) {
+	// start transaction
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	scheduleID, err := c.ScheduleRepository.GetLecturerActiveScheduleByUserID(tx, request.UserID)
+
+	if err != nil {
+		return false, err
+	}
+
+	if c.AttendanceRepository.IsLecturerPresent(tx, scheduleID) {
+		return false, fmt.Errorf("lecturer has present")
+	}
+
+	// commit db transaction
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed commit transaction : %+v", err)
+		return false, err
+	}
+
+	return true, nil
 
 }

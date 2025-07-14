@@ -30,8 +30,6 @@ func (r *AttendanceRepository) IsLecturerPresent(db *gorm.DB, scheduleID uint) b
         AND a.status IS NOT NULL
     `, scheduleID).Count(&count)
 
-	r.Log.Infof("================== count: %d================", count)
-
 	return count > 0
 }
 
