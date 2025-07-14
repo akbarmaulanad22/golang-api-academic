@@ -22,8 +22,7 @@ type CreateLecturerRequest struct {
 }
 
 type UpdateLecturerRequest struct {
-	Password string `json:"password" validate:"required"`
-
+	Password   string `json:"password"`
 	NIDN       uint   `json:"-"`
 	Name       string `json:"name" validate:"required"`
 	Gender     string `json:"gender" validate:"required"`

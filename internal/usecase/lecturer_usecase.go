@@ -138,14 +138,16 @@ func (c *LecturerUseCase) Update(ctx context.Context, request *model.UpdateLectu
 		return nil, err
 	}
 
-	// encrypt password
-	password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
-	if err != nil {
-		c.Log.Warnf("Failed to generate bcrype hash : %+v", err)
-		return nil, err
+	if request.Password != "" {
+		// encrypt password
+		password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.Log.Warnf("Failed to generate bcrype hash : %+v", err)
+			return nil, err
+		}
+		lecturer.User.Password = string(password)
 	}
 
-	lecturer.User.Password = string(password)
 	lecturer.Nidn = request.NIDN
 	lecturer.Name = request.Name
 	lecturer.Gender = request.Gender
