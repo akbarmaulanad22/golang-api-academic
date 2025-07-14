@@ -16,4 +16,5 @@ type Course struct {
 
 	// relationship
 	StudyProgram []StudyProgram `gorm:"many2many:study_program_course"`
+	Lecturer     Lecturer       `gorm:"foreignKey:lecturer_nidn;references:nidn"`
 }

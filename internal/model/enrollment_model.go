@@ -8,6 +8,7 @@ type EnrollmentResponse struct {
 	Name         string `json:"name"`
 	Sks          int    `json:"sks"`
 	Semester     int    `json:"semester"`
+	Lecturer     string `json:"lecturer"`
 }
 
 type EnrollmentAdminResponse struct {

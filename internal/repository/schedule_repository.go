@@ -54,16 +54,13 @@ func (r *ScheduleRepository) FindAllScheduleByStudentUserID(db *gorm.DB, userID 
 	var schedules []entity.Schedule
 
 	err := db.Model(&entity.Schedule{}).
-		Joins("JOIN enrollments ON enrollments.schedule_id = schedules.id").
+		Joins("JOIN enrollments ON enrollments.course_code = schedules.course_code").
 		Joins("JOIN students ON students.npm = enrollments.student_npm").
+		Where("students.user_id = ? AND schedules.date >= CURDATE()", userID).
 		Preload("Lecturer").
 		Preload("Course").
 		Preload("Classroom").
-		Where("students.user_id = ? AND schedules.date >= CURDATE()", userID).
-		Order(clause.OrderBy{Columns: []clause.OrderByColumn{
-			{Column: clause.Column{Name: "schedules.date"}, Desc: true},
-			{Column: clause.Column{Name: "schedules.start_at"}, Desc: false},
-		}}).
+		Order("schedules.date DESC, schedules.start_at ASC").
 		Find(&schedules).Error
 
 	if err != nil {

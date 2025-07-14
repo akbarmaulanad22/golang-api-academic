@@ -25,7 +25,7 @@ func (r *EnrollmentRepository) FindAllEnrollmentByStudentUserID(db *gorm.DB, use
 
 	err := db.
 		Joins("JOIN students ON enrollments.student_npm = students.npm").
-		Preload("Course").
+		Preload("Course.Lecturer").
 		Where("students.user_id = ?", userID).
 		Order("enrollments.id DESC").
 		Find(&enrollments).Error

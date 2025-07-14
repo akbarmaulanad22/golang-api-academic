@@ -12,6 +12,7 @@ func EnrollmentToResponse(enrollment *entity.Enrollment) *model.EnrollmentRespon
 		Name:         enrollment.Course.Name,
 		Sks:          enrollment.Course.Sks,
 		Semester:     enrollment.Course.Semester,
+		Lecturer:     enrollment.Course.Lecturer.Name,
 	}
 }
 
