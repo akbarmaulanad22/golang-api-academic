@@ -11,6 +11,7 @@ type GradeResponse struct {
 }
 
 type GradeInLecturerResponse struct {
+	ID    uint    `json:"id"`
 	Type  string  `json:"type"`
 	Score float64 `json:"score"`
 }
@@ -18,4 +19,24 @@ type GradeInLecturerResponse struct {
 type ListInLecturerGradeRequest struct {
 	Npm        uint   `json:"npm"`
 	CourseCode string `json:"course_code"`
+}
+
+type CreateGradeRequest struct {
+	Npm              uint    `json:"-" validate:"required"`
+	CourseCode       string  `json:"-" validate:"required"`
+	Score            float64 `json:"score" validate:"required"`
+	GradeComponentID uint    `json:"grade_component_id" validate:"required"`
+}
+
+type UpdateGradeRequest struct {
+	ID    uint    `json:"-"`
+	Score float64 `json:"score" validate:"required"`
+}
+
+type GetGradeRequest struct {
+	ID uint `json:"-" validate:"required"`
+}
+
+type DeleteGradeRequest struct {
+	ID uint `json:"-" validate:"required"`
 }

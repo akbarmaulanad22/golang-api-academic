@@ -61,14 +61,22 @@ func (route *RouteConfig) SetupAuthRoute() {
 
 	lecturer := authRouter.PathPrefix("/lecturer").Subrouter()
 	lecturer.HandleFunc("/attendance", route.AttendanceController.AttendLecturer).Methods("POST")
+
 	lecturer.HandleFunc("/courses", route.CourseController.ListByLecturerUserID).Methods("GET")
 	lecturer.HandleFunc("/courses/{courseCode}/students", route.StudentController.ListByCourseCode).Methods("GET")
+
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances", route.AttendanceController.ListByCourseCodeAndNpm).Methods("GET")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/available-schedules", route.AttendanceController.ListAvailableScheduleByCourseCode).Methods("GET")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances", route.AttendanceController.Create).Methods("POST")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Update).Methods("PUT")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Delete).Methods("DELETE")
+
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades", route.GradeController.ListByNpmAndCourseCode).Methods("GET")
+	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades", route.GradeController.Create).Methods("POST")
+	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades/{id}", route.GradeController.Update).Methods("PUT")
+	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades/{id}", route.GradeController.Delete).Methods("DELETE")
+	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades/available-grade-components", route.GradeComponentController.ListAvailableByCourseCodeAndNpm).Methods("GET")
+
 	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
 	lecturer.HandleFunc("/schedules/coming", route.ScheduleController.IsScheduleUpcomingByLecturerUserID).Methods("GET")
 
@@ -117,5 +125,4 @@ func (route *RouteConfig) SetupAuthRoute() {
 	admin.HandleFunc("/grade-components", route.GradeComponentController.List).Methods("GET")
 	admin.HandleFunc("/grade-components/{id}", route.GradeComponentController.Update).Methods("PUT")
 	admin.HandleFunc("/grade-components/{id}", route.GradeComponentController.Delete).Methods("DELETE")
-
 }

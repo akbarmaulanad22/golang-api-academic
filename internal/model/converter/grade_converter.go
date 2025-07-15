@@ -7,6 +7,7 @@ import (
 
 func GradeInLecturerToResponse(grade *entity.Grade) *model.GradeInLecturerResponse {
 	return &model.GradeInLecturerResponse{
+		ID:    grade.ID,
 		Type:  grade.GradeComponent.Name,
 		Score: grade.Score,
 	}

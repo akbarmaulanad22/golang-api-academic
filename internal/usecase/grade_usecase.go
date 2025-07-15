@@ -138,3 +138,96 @@ func (c *GradeUseCase) ListByNpmAndCourseCode(ctx context.Context, request *mode
 
 	return responses, nil
 }
+
+func (c *GradeUseCase) Create(ctx context.Context, request *model.CreateGradeRequest) (*model.GradeInLecturerResponse, error) {
+
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.WithError(err).Error("error validating request body")
+		return nil, err
+	}
+
+	enrollment := new(entity.Enrollment)
+	if err := c.EnrollmentRepo.FindEnrollmentByNpmAndCourseCode(tx, enrollment, request.Npm, request.CourseCode); err != nil {
+		return nil, err
+	}
+
+	grade := &entity.Grade{
+		Score:            request.Score,
+		EnrollmentId:     enrollment.ID,
+		GradeComponentId: request.GradeComponentID,
+	}
+
+	if err := c.GradeRepo.Create(tx, grade); err != nil {
+		c.Log.WithError(err).Error("error creating grade")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("error creating grade")
+		return nil, err
+	}
+
+	return converter.GradeInLecturerToResponse(grade), nil
+
+}
+
+func (c *GradeUseCase) Update(ctx context.Context, request *model.UpdateGradeRequest) (*model.GradeInLecturerResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.WithError(err).Error("failed to validate request body")
+		return nil, err
+	}
+
+	grade := new(entity.Grade)
+	if err := c.GradeRepo.FindById(tx, grade, request.ID); err != nil {
+		c.Log.WithError(err).Error("failed to find grade")
+		return nil, err
+	}
+
+	grade.Score = request.Score
+
+	if err := c.GradeRepo.Update(tx, grade); err != nil {
+		c.Log.WithError(err).Error("failed to update grade")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return nil, err
+	}
+
+	return converter.GradeInLecturerToResponse(grade), nil
+}
+
+func (c *GradeUseCase) Delete(ctx context.Context, request *model.DeleteGradeRequest) error {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.WithError(err).Error("failed to validate request body")
+		return err
+	}
+
+	grade := new(entity.Grade)
+	if err := c.GradeRepo.FindById(tx, grade, request.ID); err != nil {
+		c.Log.WithError(err).Error("failed to find grade")
+		return err
+	}
+
+	if err := c.GradeRepo.Delete(tx, grade); err != nil {
+		c.Log.WithError(err).Error("failed to update grade")
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return err
+	}
+
+	return nil
+}

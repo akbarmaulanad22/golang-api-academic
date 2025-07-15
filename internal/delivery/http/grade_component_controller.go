@@ -72,6 +72,42 @@ func (c *GradeComponentController) List(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (c *GradeComponentController) ListAvailableByCourseCodeAndNpm(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	npm := vars["npm"]
+	courseCode := vars["courseCode"]
+
+	npmInt, err := strconv.Atoi(npm)
+	if err != nil {
+		c.Log.Printf("Failed to parse npm: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	request := &model.ListAvailableGradeComponentRequest{
+		CourseCode: courseCode,
+		Npm:        uint(npmInt),
+	}
+
+	// Panggil UseCase
+	response, err := c.UseCase.ListAvailableByCourseCodeAndNpm(r.Context(), request)
+	if err != nil {
+		c.Log.Printf("Failed to get grade component: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Set header sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[[]model.GradeComponentAdminResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
 func (c *GradeComponentController) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

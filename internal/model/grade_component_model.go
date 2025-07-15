@@ -30,3 +30,8 @@ type GetGradeComponentRequest struct {
 type DeleteGradeComponentRequest struct {
 	ID uint `json:"-" validate:"required"`
 }
+
+type ListAvailableGradeComponentRequest struct {
+	CourseCode string `json:"course_code" validate:"required"`
+	Npm        uint   `json:"npm" validate:"required"`
+}

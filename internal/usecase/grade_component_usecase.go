@@ -147,3 +147,27 @@ func (c *GradeComponentUseCase) Delete(ctx context.Context, request *model.Delet
 
 	return nil
 }
+
+func (c *GradeComponentUseCase) ListAvailableByCourseCodeAndNpm(ctx context.Context, request *model.ListAvailableGradeComponentRequest) ([]model.GradeComponentAdminResponse, error) {
+
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	gradeComponents, err := c.GradeComponentRepository.FindAvailableByCourseCodeAndNpm(tx, request.CourseCode, request.Npm)
+	if err != nil {
+		c.Log.WithError(err).Error("error creating grade component")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("error creating grade component")
+		return nil, err
+	}
+
+	responses := make([]model.GradeComponentAdminResponse, len(gradeComponents))
+	for i, contact := range gradeComponents {
+		responses[i] = *converter.GradeComponentToResponse(&contact)
+	}
+
+	return responses, nil
+}
