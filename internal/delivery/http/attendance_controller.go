@@ -214,6 +214,49 @@ func (c *AttendanceController) Update(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (c *AttendanceController) Create(w http.ResponseWriter, r *http.Request) {
+
+	// Set header content-type sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Menutup body setelah selesai dibaca
+	defer r.Body.Close()
+
+	// Parsing request body
+	var request *model.AttendanceCreateLecturerRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		c.Log.Printf("Failed to parse request body: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	vars := mux.Vars(r)
+	npm := vars["npm"]
+
+	npmInt, err := strconv.Atoi(npm)
+	if err != nil {
+		c.Log.Printf("Failed to parse npm: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	request.Npm = uint(npmInt)
+	// Panggil UseCase.Logout
+	response, err := c.UseCase.Create(r.Context(), request)
+	if err != nil {
+		c.Log.Printf("Failed to attend user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[*model.AttendanceResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+}
+
 func (c *AttendanceController) ListByStudentUserID(w http.ResponseWriter, r *http.Request) {
 
 	auth := middleware.GetUser(r)
@@ -235,6 +278,44 @@ func (c *AttendanceController) ListByStudentUserID(w http.ResponseWriter, r *htt
 
 	// Kirim response sukses
 	if err := json.NewEncoder(w).Encode(model.WebResponse[[]model.AttendanceGroupedResponse]{Data: response}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+}
+
+func (c *AttendanceController) ListAvailableScheduleByCourseCode(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	npm := vars["npm"]
+
+	npmInt, err := strconv.Atoi(npm)
+	if err != nil {
+		c.Log.Printf("Failed to parse npm: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	courseCode := vars["courseCode"]
+
+	request := &model.ListAvailableScheduleAttendanceStudentRequest{
+		Npm:        uint(npmInt),
+		CourseCode: courseCode,
+	}
+
+	// Panggil UseCase.Logout
+	response, err := c.UseCase.ListAvailableScheduleByCourseCodeAndUserID(r.Context(), request)
+	if err != nil {
+		c.Log.Printf("Failed to attend user: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Set header sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[[]model.ScheduleResponse]{Data: response}); err != nil {
 		c.Log.Printf("Failed to write response: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}

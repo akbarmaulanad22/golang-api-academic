@@ -153,3 +153,29 @@ func (r *ScheduleRepository) FindAll(db *gorm.DB) ([]entity.Schedule, error) {
 
 	return studyProgram, nil
 }
+
+func (r *ScheduleRepository) FindAllScheduleByCourseCodeAndUserID(db *gorm.DB, courseCode string, userID uint) ([]entity.Schedule, error) {
+
+	var schedules []entity.Schedule
+
+	err := db.Model(&entity.Schedule{}).
+		Where(`
+			NOT EXISTS (
+				SELECT 1
+				FROM attendances a
+				WHERE a.schedule_id = schedules.id AND a.user_id = ?
+			)
+			AND course_code = ?
+		`, userID, courseCode).
+		Preload("Lecturer").
+		Preload("Course").
+		Preload("Classroom").
+		Order("schedules.date DESC, schedules.start_at ASC").
+		Find(&schedules).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return schedules, nil
+}

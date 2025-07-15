@@ -239,3 +239,74 @@ func (c *AttendanceUseCase) ListByStudentUserID(ctx context.Context, request *mo
 	// return responses, nil
 	return responses, nil
 }
+
+func (c *AttendanceUseCase) Create(ctx context.Context, request *model.AttendanceCreateLecturerRequest) (*model.AttendanceResponse, error) {
+
+	// validate
+	err := c.Validate.Struct(request)
+	if err != nil {
+		c.Log.Warnf("Invalid request body: %+v", err)
+		return nil, err
+	}
+
+	// start transaction
+
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	student := new(entity.Student)
+	if err := tx.Model(&entity.Student{}).Where("npm = ?", request.Npm).First(student).Error; err != nil {
+		return nil, err
+	}
+
+	attendance := &entity.Attendance{
+		Status:     request.Status,
+		Time:       time.Now(),
+		ScheduleId: request.ScheduleID,
+		UserId:     student.UserId,
+	}
+
+	// create attendance
+	if err := c.AttendanceRepository.Create(tx, attendance); err != nil {
+		c.Log.Warnf("Failed create attendance to database : %+v", err)
+		return nil, err
+	}
+
+	// commit db transaction
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed commit transaction : %+v", err)
+		return nil, err
+	}
+
+	// return converter.AttendanceToResponse(attendance), nil
+	return converter.AttendanceToResponse(attendance), nil
+}
+
+func (c *AttendanceUseCase) ListAvailableScheduleByCourseCodeAndUserID(ctx context.Context, request *model.ListAvailableScheduleAttendanceStudentRequest) ([]model.ScheduleResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	student := new(entity.Student)
+	if err := tx.Model(&entity.Student{}).Where("npm = ?", request.Npm).First(student).Error; err != nil {
+		return nil, err
+	}
+
+	schedules, err := c.ScheduleRepository.FindAllScheduleByCourseCodeAndUserID(tx, request.CourseCode, student.UserId)
+	if err != nil {
+		c.Log.WithError(err).Error("failed to find schedules")
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return nil, err
+	}
+
+	responses := make([]model.ScheduleResponse, len(schedules))
+	for i, schedule := range schedules {
+		responses[i] = *converter.ScheduleToResponse(&schedule)
+	}
+
+	// return responses, nil
+	return responses, nil
+}
