@@ -216,6 +216,34 @@ func (c *AttendanceUseCase) Update(ctx context.Context, request *model.Attendanc
 	return converter.AttendanceToResponse(attendance), nil
 }
 
+func (c *AttendanceUseCase) Delete(ctx context.Context, request *model.DeleteAttendanceRequest) error {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.WithError(err).Error("failed to validate request body")
+		return err
+	}
+
+	attendance := new(entity.Attendance)
+	if err := c.AttendanceRepository.FindById(tx, attendance, request.ID); err != nil {
+		c.Log.WithError(err).Error("failed to find attendance")
+		return err
+	}
+
+	if err := c.AttendanceRepository.Delete(tx, attendance); err != nil {
+		c.Log.WithError(err).Error("failed to update attendance")
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.WithError(err).Error("failed to commit transaction")
+		return err
+	}
+
+	return nil
+}
+
 func (c *AttendanceUseCase) ListByStudentUserID(ctx context.Context, request *model.ListAttendanceStudentRequest) ([]model.AttendanceGroupedResponse, error) {
 	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()

@@ -8,6 +8,7 @@ import (
 
 func AttendanceToResponse(attendance *entity.Attendance) *model.AttendanceResponse {
 	return &model.AttendanceResponse{
+		ID:     attendance.ID,
 		Status: attendance.Status,
 		Time:   attendance.Time,
 	}

@@ -67,6 +67,7 @@ func (route *RouteConfig) SetupAuthRoute() {
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/available-schedules", route.AttendanceController.ListAvailableScheduleByCourseCode).Methods("GET")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances", route.AttendanceController.Create).Methods("POST")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Update).Methods("PUT")
+	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/attendances/{id}", route.AttendanceController.Delete).Methods("DELETE")
 	lecturer.HandleFunc("/courses/{courseCode}/students/{npm}/grades", route.GradeController.ListByNpmAndCourseCode).Methods("GET")
 	lecturer.HandleFunc("/schedules", route.ScheduleController.ListByLecturerUserID).Methods("GET")
 	lecturer.HandleFunc("/schedules/coming", route.ScheduleController.IsScheduleUpcomingByLecturerUserID).Methods("GET")

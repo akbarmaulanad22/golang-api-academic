@@ -70,7 +70,7 @@ func (r *AttendanceRepository) FindAllByCourseCodeAndNpm(db *gorm.DB, CourseCode
 	var attendances []entity.Attendance
 	if err := db.
 		Raw(`
-			SELECT status, time, npm FROM attendances
+			SELECT attendances.id, status, time, npm FROM attendances
 			JOIN users ON attendances.user_id = users.id
 			JOIN students ON users.id = students.user_id
 			JOIN schedules ON attendances.schedule_id = schedules.id

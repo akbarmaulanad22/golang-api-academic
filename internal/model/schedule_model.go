@@ -7,6 +7,7 @@ type ListScheduleRequest struct {
 }
 
 type ScheduleResponse struct {
+	ID        uint      `json:"id"`
 	Course    string    `json:"course"`
 	Lecturer  string    `json:"lecturer"`
 	Classroom string    `json:"classroom"`

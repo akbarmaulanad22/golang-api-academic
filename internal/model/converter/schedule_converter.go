@@ -7,6 +7,7 @@ import (
 
 func ScheduleToResponse(schedule *entity.Schedule) *model.ScheduleResponse {
 	return &model.ScheduleResponse{
+		ID:        schedule.ID,
 		Course:    schedule.Course.Name,
 		Lecturer:  schedule.Lecturer.Name,
 		Classroom: schedule.Classroom.Name,

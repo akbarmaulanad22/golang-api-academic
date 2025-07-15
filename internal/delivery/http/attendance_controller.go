@@ -257,6 +257,38 @@ func (c *AttendanceController) Create(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (c *AttendanceController) Delete(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		c.Log.Printf("Failed to parse id: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	var request model.DeleteAttendanceRequest
+	request.ID = uint(idInt)
+
+	// Panggil UseCase
+	if err := c.UseCase.Delete(r.Context(), &request); err != nil {
+		c.Log.Printf("Failed to get attendance: %v", err)
+		http.Error(w, err.Error(), helper.GetStatusCode(err))
+		return
+	}
+
+	// Set header sebagai JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Kirim response sukses
+	if err := json.NewEncoder(w).Encode(model.WebResponse[bool]{Data: true}); err != nil {
+		c.Log.Printf("Failed to write response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
 func (c *AttendanceController) ListByStudentUserID(w http.ResponseWriter, r *http.Request) {
 
 	auth := middleware.GetUser(r)

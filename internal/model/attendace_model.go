@@ -3,6 +3,7 @@ package model
 import "time"
 
 type AttendanceResponse struct {
+	ID     uint      `json:"id"`
 	Status string    `json:"status"`
 	Time   time.Time `json:"time"`
 }
@@ -44,4 +45,8 @@ type ListAvailableScheduleAttendanceStudentRequest struct {
 type AttendanceGroupedResponse struct {
 	Course      string               `json:"course"`
 	Attendances []AttendanceResponse `json:"attendances"`
+}
+
+type DeleteAttendanceRequest struct {
+	ID uint `json:"-" validate:"required"`
 }
